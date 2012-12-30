@@ -4,11 +4,38 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
 import com.quizz.core.interfaces.FragmentContainer;
 
 public class NavigationUtils {
 	
-	public static void navigateTo(Class<?> cls, FragmentManager fragmentManager, 
+	public static void animatedNavigationTo(final Class<?> cls, final FragmentManager fragmentManager, 
+			final FragmentContainer container, final boolean addToStack, AnimatorSet animatorSet) {
+		
+		if (animatorSet != null) {
+			animatorSet.addListener(new AnimatorListener() {
+				
+				@Override
+				public void onAnimationStart(Animator animation) {}
+				
+				@Override
+				public void onAnimationRepeat(Animator animation) {}
+				
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					NavigationUtils.directNavigationTo(cls, fragmentManager, container, addToStack);
+				}
+				
+				@Override
+				public void onAnimationCancel(Animator animation) {}
+			});
+			animatorSet.start();
+		}
+	}
+	
+	public static void directNavigationTo(Class<?> cls, FragmentManager fragmentManager, 
 			FragmentContainer container, boolean addToStack) {
 		try {
 			Fragment fragment = fragmentManager.findFragmentByTag(cls.getSimpleName());
