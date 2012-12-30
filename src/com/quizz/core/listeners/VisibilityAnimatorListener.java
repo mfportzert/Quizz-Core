@@ -1,7 +1,5 @@
 package com.quizz.core.listeners;
 
-import java.lang.ref.WeakReference;
-
 import android.view.View;
 
 import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;

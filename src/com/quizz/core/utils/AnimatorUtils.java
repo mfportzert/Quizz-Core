@@ -1,10 +1,7 @@
 package com.quizz.core.utils;
 
-import android.view.View;
-
 import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
 import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
-import com.actionbarsherlock.internal.nineoldandroids.animation.PropertyValuesHolder;
 
 public class AnimatorUtils {
 	
