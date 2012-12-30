@@ -48,7 +48,8 @@ public class BaseMenuFragment extends Fragment {
 					}
 					
 					FragmentContainer container = (FragmentContainer) getActivity();
-					NavigationUtils.navigateTo(cls, getActivity().getSupportFragmentManager(), container);
+					NavigationUtils.navigateTo(cls, getActivity().getSupportFragmentManager(), 
+							container, true);
 				}
 			}
 		});
