@@ -12,10 +12,13 @@ public abstract class BaseListSectionsFragment extends Fragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // TODO: Load Sections here!
-        onSectionsLoaded(null);
     }
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+        onSectionsLoaded(null);
+	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
