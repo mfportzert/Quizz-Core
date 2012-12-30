@@ -8,7 +8,8 @@ import com.quizz.core.interfaces.FragmentContainer;
 
 public class NavigationUtils {
 	
-	public static void navigateTo(Class<?> cls, FragmentManager fragmentManager, FragmentContainer container) {
+	public static void navigateTo(Class<?> cls, FragmentManager fragmentManager, 
+			FragmentContainer container, boolean addToStack) {
 		try {
 			Fragment fragment = fragmentManager.findFragmentByTag(cls.getSimpleName());
             if (fragment == null) {
@@ -17,6 +18,9 @@ public class NavigationUtils {
             
             if (!fragment.isAdded()) { // if fragment is already on the screen, do nothing
             	FragmentTransaction transaction = fragmentManager.beginTransaction();
+            	if (addToStack) {
+            		transaction.addToBackStack(null);
+            	}
             	transaction.replace(container.getId(), (Fragment) cls.newInstance(), cls.getSimpleName());
             	transaction.commit();
             }
