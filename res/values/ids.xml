@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+    <!-- Custom Dialogs -->
+    <item type="id" name="dialog_title" />
+    <item type="id" name="dialog_message" />
+    <item type="id" name="dialog_positive_button" />
+    <item type="id" name="dialog_negative_button" />
+    
+</resources>

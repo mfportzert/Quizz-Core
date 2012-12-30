@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Quizz -Places</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+	
+   	<!-- Confirm Quit Dialog -->
+   	<string name="yes">Oui</string>
+   	<string name="not_yet">Pas encore!</string>
+   	<string name="quit_label">Quitter</string>
+   	<string name="sure_to_quit">Etes-vous sûr de vouloir de partir ?</string>
+   	
+</resources>
