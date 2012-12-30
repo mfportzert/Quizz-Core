@@ -7,6 +7,9 @@ public class AnimatorUtils {
 	
 	public static void bounceAnimator(ObjectAnimator baseMovement, float[] movementValues, 
 			int bounceDistance, int bounceSpeed) {
+		if (baseMovement == null) {
+			return;
+		}
 		
 		float startBouncePosition = movementValues[movementValues.length - 1];
 		float endBouncePosition = startBouncePosition + bounceDistance;
