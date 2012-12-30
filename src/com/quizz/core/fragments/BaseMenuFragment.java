@@ -32,24 +32,20 @@ public class BaseMenuFragment extends Fragment {
         super.onResume();
     }
 	
-	protected void linkButton(Button button, final Class<?> cls) {
-		linkButton(button, cls, null);
+	protected void initMenuButton(Button button, final Class<?> cls) {
+		initMenuButton(button, cls, null);
 	}
 	
-	protected void linkButton(Button button, final Class<?> cls, final AnimatorSet animatorSet) {
+	protected void initMenuButton(Button button, final Class<?> cls, final AnimatorSet animatorSet) {
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
 				if (getActivity() instanceof FragmentContainer) {
-					if (animatorSet != null) {
-						animatorSet.start();
-					}
-					
 					FragmentContainer container = (FragmentContainer) getActivity();
-					NavigationUtils.navigateTo(cls, getActivity().getSupportFragmentManager(), 
-							container, true);
+					NavigationUtils.animatedNavigationTo(cls, getActivity().getSupportFragmentManager(), 
+							container, true, animatorSet);
 				}
 			}
 		});
