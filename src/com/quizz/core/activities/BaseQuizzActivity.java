@@ -10,12 +10,17 @@ import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quizz.core.R;
+import com.quizz.core.dialogs.ConfirmQuitDialog;
+import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
 
-public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer {
+public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer, Closeable {
 	
 	private View mQuizzLayout;
+	private View mConfirmQuitDialogView;
 	private ImageView mBackgroundAnimatedImage;
+	
+	private ConfirmQuitDialog mConfirmQuitDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +47,33 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	}
 	
 	@Override
+	public void close() {
+		finish();
+	}
+	
+	@Override
 	public int getId() {
 		return R.id.fragmentsContainer;
 	}
-
+	
+	@Override
+	public void onBackPressed() {
+		if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+			if (mConfirmQuitDialog == null) {
+				mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? 
+						new ConfirmQuitDialog(this) : new ConfirmQuitDialog(this, mConfirmQuitDialogView);
+				mConfirmQuitDialog.setClosable(this);
+			}
+			mConfirmQuitDialog.show();
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
+	protected void setConfirmQuitDialogView(View view) {
+		mConfirmQuitDialogView = view;
+	}
+	
 	public View getQuizzLayout() {
 		return mQuizzLayout;
 	}
