@@ -13,6 +13,7 @@ import com.quizz.core.R;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
+import com.quizz.core.widgets.QuizzActionBar;
 
 public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer, Closeable {
 	
@@ -20,6 +21,7 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	private View mConfirmQuitDialogView;
 	private ImageView mBackgroundAnimatedImage;
 	
+	private QuizzActionBar mQuizzActionBar;
 	private ConfirmQuitDialog mConfirmQuitDialog;
 	
 	@Override
@@ -30,6 +32,7 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 		
 		mQuizzLayout = findViewById(R.id.quizzLayout);
 		mBackgroundAnimatedImage = (ImageView) findViewById(R.id.backgroundAnimatedImage);
+		mQuizzActionBar = (QuizzActionBar) findViewById(R.id.quizzTopActionBar);
 		
 		// FIXME: May not be displayed correctly on bigger screen when looping (bad transition)
 		// TODO: Make an image with beginning left similar to right end
@@ -80,5 +83,9 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	
 	public ImageView getBackgroundAnimatedImage() {
 		return mBackgroundAnimatedImage;
+	}
+	
+	public QuizzActionBar getQuizzActionBar() {
+		return mQuizzActionBar;
 	}
 }
