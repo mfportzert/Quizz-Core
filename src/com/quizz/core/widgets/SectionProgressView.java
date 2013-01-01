@@ -16,20 +16,19 @@ public class SectionProgressView extends ImageView {
 	private int mPaddingLeft = 0;
 	private int mPaddingRight = 0;
 	private int mPaddingBottom = 0;
-
+	
+	private Rect mProgressBounds = new Rect();
+	
 	public SectionProgressView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SectionProgressView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SectionProgressView(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setProgressRes(int res) {
@@ -46,20 +45,21 @@ public class SectionProgressView extends ImageView {
 		mPaddingRight = right;
 		mPaddingBottom = bottom;
 	}
-
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		if (mProgressRes > 0) {
+		if (mProgressBounds != null && mProgressRes > 0) {
 			NinePatchDrawable npd = (NinePatchDrawable) getContext()
 					.getResources().getDrawable(mProgressRes);
-
-			// TODO: Optimize memory
-			Rect npdBounds = new Rect(mPaddingLeft, mPaddingTop, 
-					(int) ((getWidth() - mPaddingRight) * mProgressValue / 100f), 
-					getHeight() - mPaddingBottom);
-			npd.setBounds(npdBounds);
+			
+			mProgressBounds.left = mPaddingLeft;
+			mProgressBounds.top = mPaddingTop; 
+			mProgressBounds.right = (int) ((getWidth() - mPaddingRight) * mProgressValue / 100f);
+			mProgressBounds.bottom = getHeight() - mPaddingBottom;
+			
+			npd.setBounds(mProgressBounds);
 			npd.draw(canvas);
 		}
 	}
