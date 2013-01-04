@@ -39,6 +39,10 @@ public class Level implements Parcelable {
 	@SerializedName("difficulty")
 	public String difficulty;
 	
+	public Level() {
+		
+	}
+	
 	/**
 	 * @param parcel
 	 */
