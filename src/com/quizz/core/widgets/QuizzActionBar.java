@@ -117,6 +117,15 @@ public class QuizzActionBar extends RelativeLayout {
 		return height;
 	}
 	
+	/**
+	 * Calls the show() method only if the visibility is set to GONE
+	 */
+	public void showIfNecessary(int duration) {
+		if (getVisibility() == View.GONE) {
+			show(duration);
+		}
+	}
+	
 	public void show(int duration) {
 		animate(new float[] { -getBarHeight(), 0 }, duration, (duration > MOVE_DIRECT) ? true : false, 
 				mAbShowAnimatorListener);
