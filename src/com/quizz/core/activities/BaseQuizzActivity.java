@@ -17,12 +17,16 @@ import com.quizz.core.widgets.QuizzActionBar;
 
 public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer, Closeable {
 	
+	private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
+	
 	private View mQuizzLayout;
 	private View mConfirmQuitDialogView;
 	private ImageView mBackgroundAnimatedImage;
 	
 	private QuizzActionBar mQuizzActionBar;
 	private ConfirmQuitDialog mConfirmQuitDialog;
+	
+	private boolean mHideAbOnRotation = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,13 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 		
 		View shadowView = findViewById(R.id.ab_separator_shadow);
 		mQuizzActionBar.setShadowView(shadowView);
+		
+		if (savedInstanceState != null) {
+			mHideAbOnRotation = savedInstanceState.getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
+			if (mHideAbOnRotation) {
+				mQuizzActionBar.hide(QuizzActionBar.MOVE_DIRECT);
+			}
+		}
 		
 		// FIXME: May not be displayed correctly on bigger screen when looping (bad transition)
 		// TODO: Make an image with beginning left similar to right end
@@ -76,6 +87,12 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 		}
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putBoolean(HIDE_AB_ON_ROTATION_CHANGE, mHideAbOnRotation);
+		super.onSaveInstanceState(outState);
+	}
+	
 	protected void setConfirmQuitDialogView(View view) {
 		mConfirmQuitDialogView = view;
 	}
@@ -90,5 +107,13 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	
 	public QuizzActionBar getQuizzActionBar() {
 		return mQuizzActionBar;
+	}
+	
+	/**
+	 * Default behaviour is 'false'
+	 * @param hide
+	 */
+	public void setHideAbOnRotationChange(boolean hide) {
+		mHideAbOnRotation = hide;
 	}
 }

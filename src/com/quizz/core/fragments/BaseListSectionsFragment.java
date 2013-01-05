@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.models.Section;
 
 public abstract class BaseListSectionsFragment extends Fragment {
@@ -24,6 +25,9 @@ public abstract class BaseListSectionsFragment extends Fragment {
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		if (getActivity() instanceof BaseQuizzActivity) {
+			((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
+		}
 		super.onActivityCreated(savedInstanceState);
 		loadSections();
 	}

@@ -7,8 +7,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
+import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.interfaces.FragmentContainer;
 import com.quizz.core.utils.NavigationUtils;
+import com.quizz.core.widgets.QuizzActionBar;
 
 public class BaseMenuFragment extends Fragment {
 	
@@ -16,6 +18,14 @@ public class BaseMenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		if (getActivity() instanceof BaseQuizzActivity) {
+			((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(true);
+		}
+		super.onActivityCreated(savedInstanceState);
+	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
