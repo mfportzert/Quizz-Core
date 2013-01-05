@@ -1,12 +1,12 @@
 package com.quizz.core.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,7 +21,7 @@ public class QuizzActionBar extends RelativeLayout {
 	public static final int MOVE_DIRECT = 1;
 	public static final int MOVE_NORMAL = 300;
 	
-	private ImageView mBackButton;
+	private ImageButton mBackButton;
 	private TextView mMiddleText;
 	private TextView mRightText;
 	private View mShadow;
@@ -49,7 +49,7 @@ public class QuizzActionBar extends RelativeLayout {
 	//@SuppressWarnings("deprecation")
 	private void init(Context context, TypedArray style) {
 		LayoutInflater.from(context).inflate(R.layout.layout_quizz_action_bar, this, true);
-		mBackButton = (ImageView) findViewById(R.id.ab_back_button);
+		mBackButton = (ImageButton) findViewById(R.id.ab_back_button);
 		mMiddleText = (TextView) findViewById(R.id.ab_middle_text);
 		mRightText = (TextView) findViewById(R.id.ab_right_text);
 		/*
@@ -65,6 +65,16 @@ public class QuizzActionBar extends RelativeLayout {
 			
 			style.recycle();
 		}*/
+		
+		mBackButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (getContext() instanceof Activity) {
+					((Activity) getContext()).onBackPressed();
+				}
+			}
+		});
 	}
 	
 	public void setShadowView(View shadowView) {
@@ -75,7 +85,7 @@ public class QuizzActionBar extends RelativeLayout {
 		if (mShadow != null) mShadow.setVisibility(visibility);
 	}
 	
-	public ImageView getBackButton() {
+	public ImageButton getBackButton() {
 		return mBackButton;
 	}
 	

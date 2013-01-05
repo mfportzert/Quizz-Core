@@ -4,12 +4,13 @@
     android:layout_height="match_parent"
     android:background="#DDD" >
 
-    <ImageView
+    <ImageButton
         android:id="@id/ab_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_margin="8dp"
+        android:background="@null"
         android:scaleType="fitStart" />
 
     <TextView
