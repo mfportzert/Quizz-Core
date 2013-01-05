@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="widgets.QuizzActionBar">
+        <attr name="shadow" format="reference" />
+    </declare-styleable>
+
+</resources>

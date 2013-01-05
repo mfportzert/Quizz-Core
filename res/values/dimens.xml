@@ -2,6 +2,5 @@
 <resources>
 
     <dimen name="ab_shadow_height">8dp</dimen>
-	<dimen name="margin_ab_shadow_height">-8dp</dimen>
 	
 </resources>

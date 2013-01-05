@@ -34,6 +34,9 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 		mBackgroundAnimatedImage = (ImageView) findViewById(R.id.backgroundAnimatedImage);
 		mQuizzActionBar = (QuizzActionBar) findViewById(R.id.quizzTopActionBar);
 		
+		View shadowView = findViewById(R.id.ab_separator_shadow);
+		mQuizzActionBar.setShadowView(shadowView);
+		
 		// FIXME: May not be displayed correctly on bigger screen when looping (bad transition)
 		// TODO: Make an image with beginning left similar to right end
 		// TODO: Scroll the horizontalScrollView instead of translating the

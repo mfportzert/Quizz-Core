@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,7 +24,10 @@ public class QuizzActionBar extends RelativeLayout {
 	private ImageView mBackButton;
 	private TextView mMiddleText;
 	private TextView mRightText;
+	private View mShadow;
+	
 	private ObjectAnimator mAbAnimation = new ObjectAnimator();
+	private ObjectAnimator mShadowAnimation = new ObjectAnimator();
 	
 	public QuizzActionBar(Context context) {
 		super(context);
@@ -32,50 +36,43 @@ public class QuizzActionBar extends RelativeLayout {
 
 	public QuizzActionBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TypedArray style = context.obtainStyledAttributes(attrs,
-		// R.styleable.PPListViewContainer);
-		init(context, null);
+		TypedArray style = context.obtainStyledAttributes(attrs, R.styleable.widgets_QuizzActionBar);
+		init(context, style);
 	}
 
 	public QuizzActionBar(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		init(context, null);
+		TypedArray style = context.obtainStyledAttributes(attrs, R.styleable.widgets_QuizzActionBar, defStyle, 0);
+		init(context, style);
 	}
-
+	
 	//@SuppressWarnings("deprecation")
 	private void init(Context context, TypedArray style) {
 		LayoutInflater.from(context).inflate(R.layout.layout_quizz_action_bar, this, true);
-		this.mBackButton = (ImageView) findViewById(R.id.ab_back_button);
-		this.mMiddleText = (TextView) findViewById(R.id.ab_middle_text);
-		this.mRightText = (TextView) findViewById(R.id.ab_right_text);
-		
+		mBackButton = (ImageView) findViewById(R.id.ab_back_button);
+		mMiddleText = (TextView) findViewById(R.id.ab_middle_text);
+		mRightText = (TextView) findViewById(R.id.ab_right_text);
 		/*
+		 * GetParent always null..
+		 * 
 		if (style != null) {
-			if (style.hasValue(R.styleable.PPListViewContainer_refreshButtonDrawable)) {
-				Drawable refreshDrawable = style.getDrawable(R.styleable.PPListViewContainer_refreshButtonDrawable);
-				if (null != refreshDrawable) {
-					this.mRefreshButton.setBackgroundDrawable(refreshDrawable);
+			if (style.hasValue(R.styleable.widgets_QuizzActionBar_shadow)) {
+				int shadowInt = style.getResourceId(R.styleable.widgets_QuizzActionBar_shadow, -1);
+				if (shadowInt > 0 && getParent() instanceof ViewGroup) {
+					mShadow = ((ViewGroup) getParent()).findViewById(shadowInt);
 				}
 			}
-
-			if (style.hasValue(R.styleable.PPListViewContainer_emptyListMessage)) {
-				this.mEmptyMsg = style.getString(R.styleable.PPListViewContainer_emptyListMessage);
-				if (null == this.mEmptyMsg) {
-					this.mEmptyMsg = context
-							.getResources()
-							.getString(
-									style.getResourceId(
-											R.styleable.PPListViewContainer_emptyListMessage,
-											0));
-				}
-			}
-
-			style.getResourceId(
-					R.styleable.PPListViewContainer_emptyListMessage,
-					R.drawable.ic_refresh);
+			
 			style.recycle();
-		}
-		*/
+		}*/
+	}
+	
+	public void setShadowView(View shadowView) {
+		mShadow = shadowView;
+	}
+	
+	public void setShadowVisibility(int visibility) {
+		if (mShadow != null) mShadow.setVisibility(visibility);
 	}
 	
 	public ImageView getBackButton() {
@@ -99,6 +96,21 @@ public class QuizzActionBar extends RelativeLayout {
 		mAbAnimation.setDuration(duration);
 		if (listener != null) {
 			mAbAnimation.addListener(listener);
+		}
+		
+		if (mShadow != null) {
+			if (mShadowAnimation.isRunning()) {
+				mShadowAnimation.cancel();
+			}
+			
+			mShadowAnimation = ObjectAnimator.ofFloat(mShadow, "translationY", movements);
+			mShadowAnimation.setDuration(duration);
+			
+			if (bounce) {
+				AnimatorUtils.bounceAnimator(mShadowAnimation, movements, 5, 100);
+			} else {
+				mShadowAnimation.start();
+			}
 		}
 		
 		if (bounce) {
