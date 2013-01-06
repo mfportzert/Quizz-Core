@@ -2,6 +2,7 @@ package com.quizz.core.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -42,11 +43,12 @@ public class BaseMenuFragment extends Fragment {
         super.onResume();
     }
 	
-	protected void initMenuButton(Button button, final Class<?> cls) {
-		initMenuButton(button, cls, null);
+	protected void initMenuButton(Button button, final Class<?> cls, final FragmentTransaction transaction) {
+		initMenuButton(button, cls, transaction, null);
 	}
 	
-	protected void initMenuButton(Button button, final Class<?> cls, final AnimatorSet animatorSet) {
+	protected void initMenuButton(Button button, final Class<?> cls, final FragmentTransaction transaction,
+			final AnimatorSet animatorSet) {
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -55,7 +57,7 @@ public class BaseMenuFragment extends Fragment {
 				if (getActivity() instanceof FragmentContainer) {
 					FragmentContainer container = (FragmentContainer) getActivity();
 					NavigationUtils.animatedNavigationTo(cls, getActivity().getSupportFragmentManager(), 
-							container, true, animatorSet);
+							container, true, transaction, animatorSet);
 				}
 			}
 		});

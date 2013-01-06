@@ -19,7 +19,7 @@ import com.quizz.core.utils.AnimatorUtils;
 public class QuizzActionBar extends RelativeLayout {
 	
 	public static final int MOVE_DIRECT = 1;
-	public static final int MOVE_NORMAL = 300;
+	public static final int MOVE_NORMAL = 250;
 	
 	private ImageButton mBackButton;
 	private TextView mMiddleText;

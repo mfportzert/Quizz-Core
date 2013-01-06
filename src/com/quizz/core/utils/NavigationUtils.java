@@ -12,7 +12,8 @@ import com.quizz.core.interfaces.FragmentContainer;
 public class NavigationUtils {
 	
 	public static void animatedNavigationTo(final Class<?> cls, final FragmentManager fragmentManager, 
-			final FragmentContainer container, final boolean addToStack, AnimatorSet animatorSet) {
+			final FragmentContainer container, final boolean addToStack, final FragmentTransaction transaction,
+			AnimatorSet animatorSet) {
 		
 		if (animatorSet != null) {
 			animatorSet.addListener(new AnimatorListener() {
@@ -25,7 +26,7 @@ public class NavigationUtils {
 				
 				@Override
 				public void onAnimationEnd(Animator animation) {
-					NavigationUtils.directNavigationTo(cls, fragmentManager, container, addToStack);
+					NavigationUtils.directNavigationTo(cls, fragmentManager, container, addToStack, transaction);
 				}
 				
 				@Override
@@ -36,7 +37,7 @@ public class NavigationUtils {
 	}
 	
 	public static void directNavigationTo(Class<?> cls, FragmentManager fragmentManager, 
-			FragmentContainer container, boolean addToStack) {
+			FragmentContainer container, boolean addToStack, FragmentTransaction transaction) {
 		try {
 			Fragment fragment = fragmentManager.findFragmentByTag(cls.getSimpleName());
             if (fragment == null) {
@@ -44,10 +45,7 @@ public class NavigationUtils {
             }
             
             if (!fragment.isAdded()) { // if fragment is already on the screen, do nothing
-            	FragmentTransaction transaction = fragmentManager.beginTransaction();
-            	if (addToStack) {
-            		transaction.addToBackStack(null);
-            	}
+            	if (addToStack) transaction.addToBackStack(null);
             	transaction.replace(container.getId(), (Fragment) cls.newInstance(), cls.getSimpleName());
             	transaction.commit();
             }
