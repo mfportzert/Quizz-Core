@@ -39,6 +39,10 @@ public class Section implements Parcelable {
 		parcel.readList(this.levels, Section.class.getClassLoader());
 	}
 	
+	public Section() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public int describeContents() {
 		return 0;
