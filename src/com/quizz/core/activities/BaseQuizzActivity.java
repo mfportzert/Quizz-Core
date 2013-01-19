@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,8 +53,10 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 	
 	ViewSwitcher viewSwitcher;
 	
-    private TextView tv_progress;  
-    private ProgressBar pb_progressBar; 
+	private List<Section> mSections;
+	
+    private TextView mTvProgress;  
+    private ProgressBar mPbProgressBar; 
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,20 +69,21 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
         setContentView(viewSwitcher);
         buildLoadingLayout();
         buildGameLayout(savedInstanceState);
-		
-		new loadGameTask().execute();
+        
+        DbHelper dbHelper = ((BaseQuizzApplication) getApplicationContext()).getDbHelper();
+        new LoadGameTask(dbHelper).execute();
 	}
 
 	private void buildLoadingLayout() {
-        tv_progress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);  
-        pb_progressBar = (ProgressBar) viewSwitcher.findViewById(R.id.pb_progressbar);  
-        pb_progressBar.setMax(100);
+        mTvProgress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);  
+        mPbProgressBar = (ProgressBar) viewSwitcher.findViewById(R.id.pb_progressbar);  
+        mPbProgressBar.setMax(100);
 	}
 	
 	private void buildGameLayout(Bundle savedInstanceState) {
-		mQuizzLayout = viewSwitcher.findViewById(R.id.quizzLayout);
-		mBackgroundAnimatedImage = (ImageView) viewSwitcher.findViewById(R.id.backgroundAnimatedImage);
-		mQuizzActionBar = (QuizzActionBar) viewSwitcher.findViewById(R.id.quizzTopActionBar);
+		mQuizzLayout = findViewById(R.id.quizzLayout);
+		mBackgroundAnimatedImage = (ImageView) findViewById(R.id.backgroundAnimatedImage);
+		mQuizzActionBar = (QuizzActionBar) findViewById(R.id.quizzTopActionBar);
 		
 		View shadowView = viewSwitcher.findViewById(R.id.ab_separator_shadow);
 		mQuizzActionBar.setShadowView(shadowView);
@@ -161,64 +165,60 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 		mHideAbOnRotation = hide;
 	}
 	
-	
 	//////////////////////////////////////////
 	//			loading AsyncTask			//
 	//////////////////////////////////////////
 	
-	private class loadGameTask extends AsyncTask<Void, Integer, Bundle> {
-
-		private int progress = 0;
+	private class LoadGameTask extends AsyncTask<Void, Integer, Void> {
+		private int mProgress = 0;
 		private static final String PREF_VERSION_KEY = "VERSION";
 		private static final int PREF_VERSION_VALUE = 1;
 		private static final String BUNDLE_SECTION_KEY = "SECTION";
-		private SharedPreferences sharedPreferences;
-		private SharedPreferences.Editor editor;
+		
+		private BaseQuizzDAO mBaseQuizzDAO;
+		
+		public LoadGameTask(DbHelper dbHelper) {
+			mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
+		}
 		
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 		}
 		
 		@Override
 		protected void onProgressUpdate(Integer... progress) {
 			if (progress[0] <= 100) {
-				tv_progress.setText(Integer.toString(progress[0]) + "%");
-				pb_progressBar.setProgress(progress[0]);
+				mTvProgress.setText(Integer.toString(progress[0]) + "%");
+				mPbProgressBar.setProgress(progress[0]);
             }
 		}
 		
 		@Override
-		protected void onPostExecute(Bundle result) {
+		protected void onPostExecute(Void result) {
 			 viewSwitcher.showNext();
-			 BaseQuizzApplication.sections = result.getParcelableArrayList(BUNDLE_SECTION_KEY);
 		}
 		
 		@Override
-		protected Bundle doInBackground(Void... arg0) {
+		protected Void doInBackground(Void... arg0) {
 			
-			Bundle bundle = new Bundle();
-			
-			BaseQuizzDAO dao = new BaseQuizzDAO();
-			ArrayList<Section> sections = new ArrayList<Section>();
-			
-			sharedPreferences = getPreferences(MODE_PRIVATE);
+			SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
 		    if (!sharedPreferences.contains(PREF_VERSION_KEY)) {
 		    	// need to create db
-		    	editor = sharedPreferences.edit();
+		    	Editor editor = sharedPreferences.edit();
 			    editor.putInt(PREF_VERSION_KEY, PREF_VERSION_VALUE);
 			    editor.commit();
+			    
 		    	Gson gson = new Gson();
         		Type type = new TypeToken<Collection<Section>>(){}.getType();
         		InputStream is;
         		try {
-        			is = getResources().getAssets().open("quizz.json");
+        			is = getResources().getAssets().open("places.xml");
         			Reader reader = new InputStreamReader(is);
-        			sections = gson.fromJson(reader, type);
-        			int ratio = 100 / sections.size();
-        			for (Section section : sections) {
-        				dao.insertSection(section);
-        				publishProgress(++progress * ratio);
+        			mSections = gson.fromJson(reader, type);
+        			int ratio = 100 / mSections.size();
+        			for (Section section : mSections) {
+        				mBaseQuizzDAO.insertSection(section);
+        				publishProgress(++mProgress * ratio);
         			}
         		} catch (IOException e) {
         			e.printStackTrace();
@@ -227,18 +227,15 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 		    	// need to upgrade db
 		    } else {
 		    	// retrieve data from db
-    			sections = readDbShowingProgression(dao);
+		    	mSections = readDbShowingProgression();
 		    }
-			
-		    bundle.putParcelableArrayList(BUNDLE_SECTION_KEY, sections);
-		    
-            return bundle;
+		    return null;
 		}
 		
-		private ArrayList<Section> readDbShowingProgression(BaseQuizzDAO dao) {
+		private ArrayList<Section> readDbShowingProgression() {
 			
 			ArrayList<Section> sections = new ArrayList<Section>();
-			Cursor sectionsCursor = dao.getSections();
+			Cursor sectionsCursor = mBaseQuizzDAO.getSections();
 			int ratio = 100 / sectionsCursor.getCount();
 			int lastId = 0;
 			Section section = null;
@@ -254,10 +251,10 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 					}
 					levels.clear();
 				}
-				section = dao.cursorToSection(sectionsCursor);
-				levels.add(dao.cursorToLevel(sectionsCursor));
+				section = mBaseQuizzDAO.cursorToSection(sectionsCursor);
+				levels.add(mBaseQuizzDAO.cursorToLevel(sectionsCursor));
 				lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
-				publishProgress(++progress * ratio);
+				publishProgress(++mProgress * ratio);
 				if (sectionsCursor.isLast()) {
     				section.levels.addAll(levels);
 					sections.add(section);
@@ -267,7 +264,5 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 			sectionsCursor.close();
 			return sections;
 		}
-		
 	};
-	
 }
