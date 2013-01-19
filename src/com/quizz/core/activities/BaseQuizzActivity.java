@@ -236,7 +236,7 @@ private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE
 			
 			ArrayList<Section> sections = new ArrayList<Section>();
 			Cursor sectionsCursor = mBaseQuizzDAO.getSections();
-			int ratio = 100 / sectionsCursor.getCount();
+			int ratio = (sectionsCursor.getCount() > 0) ? 100 / sectionsCursor.getCount() : 100;
 			int lastId = 0;
 			Section section = null;
 			List<Level> levels = new ArrayList<Level>();
