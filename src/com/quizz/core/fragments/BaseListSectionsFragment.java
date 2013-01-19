@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -62,5 +63,5 @@ public abstract class BaseListSectionsFragment extends Fragment {
 		}
 	}
 	
-	protected abstract void onSectionsLoaded(ArrayList<Section> listSections);
+	protected abstract void onSectionsLoaded(List<Section> listSections);
 }
