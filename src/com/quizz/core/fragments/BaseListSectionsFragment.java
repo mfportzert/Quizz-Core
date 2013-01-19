@@ -53,7 +53,7 @@ public abstract class BaseListSectionsFragment extends Fragment {
 		Type type = new TypeToken<Collection<Section>>(){}.getType();
 		InputStream is;
 		try {
-			is = getResources().getAssets().open("quizz.json");
+			is = getResources().getAssets().open("places.json");
 			Reader reader = new InputStreamReader(is);
 			ArrayList<Section> sections = gson.fromJson(reader, type);
 	        onSectionsLoaded(sections);

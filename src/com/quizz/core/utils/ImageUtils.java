@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 public class ImageUtils {
 
@@ -11,7 +12,7 @@ public class ImageUtils {
 		try {
 			return Drawable.createFromStream(context.getAssets().open(filePath), null);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e("ImageUtils", e.getMessage(), e);
 		}
 		return null;
 	}	

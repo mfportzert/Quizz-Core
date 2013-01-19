@@ -12,18 +12,21 @@ public class LoadPictureTask extends AsyncTask<Void, Void, Drawable> {
 	private LoadPictureListener mListener;
 	private Context mContext;
 	private ImageView mImageView;
-	
-	public LoadPictureTask(Context context, ImageView imageView, LoadPictureListener listener) {
+	private String mPath;
+
+	public LoadPictureTask(Context context, String path, ImageView imageView,
+			LoadPictureListener listener) {
+		mPath = path;
 		mContext = context;
 		mListener = listener;
 		mImageView = imageView;
 	}
-	
+
 	@Override
 	protected Drawable doInBackground(Void... arg0) {
-		return ImageUtils.createFromAsset(mContext, "pictures/big_ben.jpg");
+		return ImageUtils.createFromAsset(mContext, mPath);
 	}
-	
+
 	@Override
 	protected void onPostExecute(Drawable drawable) {
 		mListener.onPictureLoaded(drawable, mImageView);

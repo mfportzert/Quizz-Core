@@ -1,9 +1,6 @@
 package com.quizz.core.fragments;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public abstract class BaseListLevelsFragment extends Fragment {
+public abstract class BaseGridLevelsFragment extends Fragment {
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {

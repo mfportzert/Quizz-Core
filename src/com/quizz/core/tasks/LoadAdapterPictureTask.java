@@ -12,18 +12,20 @@ public class LoadAdapterPictureTask extends AsyncTask<Void, Void, Drawable> {
 	private Context mContext;
 	private int mPosition;
 	private Object mTag;
-
-	public LoadAdapterPictureTask(Context context, int position, Object tag, 
+	private String mPath;
+	
+	public LoadAdapterPictureTask(Context context, String path, int position, Object tag, 
 			LoadAdapterPictureListener listener) {
 		mContext = context;
 		mListener = listener;
 		mPosition = position;
+		mPath = path; 
 		mTag = tag;
 	}
 	
 	@Override
 	protected Drawable doInBackground(Void... arg0) {
-		return ImageUtils.createFromAsset(mContext, "pictures/big_ben.jpg");
+		return ImageUtils.createFromAsset(mContext, mPath);
 	}
 	
 	@Override

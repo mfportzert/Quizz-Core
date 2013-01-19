@@ -5,7 +5,7 @@ import android.app.Application;
 import com.quizz.core.db.DbHelper;
 
 public class BaseQuizzApplication extends Application {
-
+	
     private DbHelper mDbHelper;
     
     public synchronized DbHelper getDbHelper() {
