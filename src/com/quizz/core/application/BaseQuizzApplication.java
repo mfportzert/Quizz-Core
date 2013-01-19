@@ -1,15 +1,20 @@
 package com.quizz.core.application;
 
+import java.util.List;
+
 import com.quizz.core.db.DbHelper;
+import com.quizz.core.models.Section;
+
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class BaseQuizzApplication extends Application {
-
+    
     private DbHelper mDbHelper;
     private static BaseQuizzApplication mSelf;
+    public static List<Section> sections;
 
     public synchronized static SQLiteDatabase db() {
 		if (self() == null)
@@ -41,5 +46,4 @@ public class BaseQuizzApplication extends Application {
       		self().mDbHelper.close();
       	self().mDbHelper = null;
 	}
-    
 }
