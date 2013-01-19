@@ -1,7 +1,6 @@
 package com.quizz.core.db;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -13,13 +12,17 @@ import com.quizz.core.models.Section;
 
 public class BaseQuizzDAO {
 
-	public BaseQuizzDAO() {}
+	private DbHelper mDbHelper;
+	
+	public BaseQuizzDAO(DbHelper dbHelper) {
+		mDbHelper = dbHelper;
+	}
 	
 	public void insertSection(Section section) {
 
 		ContentValues sectionValues = new ContentValues();
 	    sectionValues.put(DbHelper.COLUMN_NUMBER, section.number);
-	    long sectionInsertId = BaseQuizzApplication.db().insert(DbHelper.TABLE_SECTIONS, null, sectionValues);
+	    long sectionInsertId = mDbHelper.getWritableDatabase().insert(DbHelper.TABLE_SECTIONS, null, sectionValues);
 
 	    for (Level level : section.levels) {
 		    ContentValues levelValues = new ContentValues();
@@ -34,7 +37,7 @@ public class BaseQuizzDAO {
 		    levelValues.put(DbHelper.COLUMN_RESPONSE, level.response);
 		    levelValues.put(DbHelper.COLUMN_STATUS, Level.STATUS_LEVEL_UNCLEAR);
 		    levelValues.put(DbHelper.COLUMN_FK_SECTION, sectionInsertId);
-		    BaseQuizzApplication.db().insert(DbHelper.TABLE_LEVELS, null, levelValues);
+		    mDbHelper.getWritableDatabase().insert(DbHelper.TABLE_LEVELS, null, levelValues);
 
 //	    	String[] responses = level.response.split("|");
 //	    	for (String response : responses) {
@@ -70,7 +73,7 @@ public class BaseQuizzDAO {
 				DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;// +
 //				" GROUP BY " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID;
 		
-		Cursor cursor = BaseQuizzApplication.db().rawQuery(sqlQuery, null);
+		Cursor cursor = mDbHelper.getWritableDatabase().rawQuery(sqlQuery, null);
 //		cursor.moveToFirst();
 //	    cursor.close();
 //		int lastId = 0;
