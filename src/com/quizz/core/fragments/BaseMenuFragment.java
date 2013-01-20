@@ -11,55 +11,56 @@ import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
 import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.interfaces.FragmentContainer;
 import com.quizz.core.utils.NavigationUtils;
-import com.quizz.core.widgets.QuizzActionBar;
 
 public class BaseMenuFragment extends Fragment {
-	
-	@Override
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	super.onCreate(savedInstanceState);
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		if (getActivity() instanceof BaseQuizzActivity) {
-			((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(true);
-		}
-		super.onActivityCreated(savedInstanceState);
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+	if (getActivity() instanceof BaseQuizzActivity) {
+	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(true);
 	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-	
-	@Override
+	super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+	super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onPause() {
-        super.onPause();
+	super.onPause();
     }
-	
-	@Override
+
+    @Override
     public void onResume() {
-        super.onResume();
+	super.onResume();
     }
-	
-	protected void initMenuButton(Button button, final Class<?> cls, final FragmentTransaction transaction) {
-		initMenuButton(button, cls, transaction, null);
-	}
-	
-	protected void initMenuButton(Button button, final Class<?> cls, final FragmentTransaction transaction,
-			final AnimatorSet animatorSet) {
-		button.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				if (getActivity() instanceof FragmentContainer) {
-					FragmentContainer container = (FragmentContainer) getActivity();
-					NavigationUtils.animatedNavigationTo(cls, getActivity().getSupportFragmentManager(), 
-							container, true, transaction, animatorSet);
-				}
-			}
-		});
-	}
+
+    protected void initMenuButton(Button button, final Class<?> cls,
+	    final FragmentTransaction transaction) {
+	initMenuButton(button, cls, transaction, null);
+    }
+
+    protected void initMenuButton(Button button, final Class<?> cls,
+	    final FragmentTransaction transaction, final AnimatorSet animatorSet) {
+	button.setOnClickListener(new OnClickListener() {
+
+	    @Override
+	    public void onClick(View v) {
+
+		if (getActivity() instanceof FragmentContainer) {
+		    FragmentContainer container = (FragmentContainer) getActivity();
+		    NavigationUtils
+			    .animatedNavigationTo(cls, getActivity().getSupportFragmentManager(),
+				    container, true, transaction, animatorSet);
+		}
+	    }
+	});
+    }
 }

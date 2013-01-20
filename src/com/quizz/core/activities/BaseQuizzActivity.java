@@ -5,14 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -33,241 +33,212 @@ import com.quizz.core.db.DbHelper;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
-import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 import com.quizz.core.widgets.QuizzActionBar;
 
-public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer, Closeable {
-	
-private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
-	
-	private View mQuizzLayout;
-	private View mConfirmQuitDialogView;
-	private ImageView mBackgroundAnimatedImage;
-	
-	private QuizzActionBar mQuizzActionBar;
-	private ConfirmQuitDialog mConfirmQuitDialog;
-	
-	private boolean mHideAbOnRotation = false;
-	
-	ViewSwitcher viewSwitcher;
-	
-    private TextView tv_progress;  
-    private ProgressBar pb_progressBar; 
+public abstract class BaseQuizzActivity extends SherlockFragmentActivity implements
+	FragmentContainer, Closeable {
+    private static final String TAG = BaseQuizzActivity.class.getSimpleName();
+
+    private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
+    private static final String PREF_VERSION_KEY = "VERSION";
+    private static final int PREF_VERSION_VALUE = 1;
+
+    private View mQuizzLayout;
+    private View mConfirmQuitDialogView;
+    private ImageView mBackgroundAnimatedImage;
+
+    private QuizzActionBar mQuizzActionBar;
+    private ConfirmQuitDialog mConfirmQuitDialog;
+
+    private boolean mHideAbOnRotation = false;
+
+    ViewSwitcher viewSwitcher;
+
+    private TextView mTvProgress;
+    private ProgressBar mPbProgressBar;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		super.onCreate(savedInstanceState);
-		
-		viewSwitcher = new ViewSwitcher(BaseQuizzActivity.this);
-        viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.loading_screen, null));
-        viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.activity_quizz, null));
-        setContentView(viewSwitcher);
-        buildLoadingLayout();
-        buildGameLayout(savedInstanceState);
-		
-		new loadGameTask().execute();
+    protected void onCreate(Bundle savedInstanceState) {
+	requestWindowFeature(Window.FEATURE_NO_TITLE);
+	super.onCreate(savedInstanceState);
+
+	viewSwitcher = new ViewSwitcher(BaseQuizzActivity.this);
+	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.loading_screen,
+		null));
+	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.activity_quizz,
+		null));
+	setContentView(viewSwitcher);
+	buildLoadingLayout();
+	buildGameLayout(savedInstanceState);
+
+	SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+	if (!sharedPreferences.contains(PREF_VERSION_KEY)) {
+	    DbHelper dbHelper = ((BaseQuizzApplication) getApplicationContext()).getDbHelper();
+	    new FirstLaunchTask(dbHelper).execute();
+	} else if (sharedPreferences.getInt(PREF_VERSION_KEY, 0) < PREF_VERSION_VALUE) {
+	    // need to upgrade db
+	} else {
+	    viewSwitcher.showNext();
+	}
+    }
+
+    private void buildLoadingLayout() {
+	mTvProgress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);
+	mPbProgressBar = (ProgressBar) viewSwitcher.findViewById(R.id.pb_progressbar);
+	mPbProgressBar.setMax(100);
+    }
+
+    private void buildGameLayout(Bundle savedInstanceState) {
+	mQuizzLayout = findViewById(R.id.quizzLayout);
+	mBackgroundAnimatedImage = (ImageView) findViewById(R.id.backgroundAnimatedImage);
+	mQuizzActionBar = (QuizzActionBar) findViewById(R.id.quizzTopActionBar);
+
+	View shadowView = viewSwitcher.findViewById(R.id.ab_separator_shadow);
+	mQuizzActionBar.setShadowView(shadowView);
+
+	if (savedInstanceState != null) {
+	    mHideAbOnRotation = savedInstanceState.getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
+	    if (mHideAbOnRotation) {
+		mQuizzActionBar.hide(QuizzActionBar.MOVE_DIRECT);
+	    }
 	}
 
-	private void buildLoadingLayout() {
-        tv_progress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);  
-        pb_progressBar = (ProgressBar) viewSwitcher.findViewById(R.id.pb_progressbar);  
-        pb_progressBar.setMax(100);
-	}
-	
-	private void buildGameLayout(Bundle savedInstanceState) {
-		mQuizzLayout = viewSwitcher.findViewById(R.id.quizzLayout);
-		mBackgroundAnimatedImage = (ImageView) viewSwitcher.findViewById(R.id.backgroundAnimatedImage);
-		mQuizzActionBar = (QuizzActionBar) viewSwitcher.findViewById(R.id.quizzTopActionBar);
-		
-		View shadowView = viewSwitcher.findViewById(R.id.ab_separator_shadow);
-		mQuizzActionBar.setShadowView(shadowView);
-		
-		if (savedInstanceState != null) {
-			mHideAbOnRotation = savedInstanceState.getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
-			if (mHideAbOnRotation) {
-				mQuizzActionBar.hide(QuizzActionBar.MOVE_DIRECT);
-			}
-		}
-		
-		// FIXME: May not be displayed correctly on bigger screen when looping (bad transition)
-		// TODO: Make an image with beginning left similar to right end
-		// TODO: Scroll the horizontalScrollView instead of translating the
-		// imageView
-		HorizontalScrollView bgAnimatedImageContainer = (HorizontalScrollView) 
-				viewSwitcher.findViewById(R.id.backgroundAnimatedImageContainer);
-		bgAnimatedImageContainer.setOnTouchListener(new OnTouchListener() {
+	// FIXME: May not be displayed correctly on bigger screen when looping
+	// (bad transition)
+	// TODO: Make an image with beginning left similar to right end
+	// TODO: Scroll the horizontalScrollView instead of translating the
+	// imageView
+	HorizontalScrollView bgAnimatedImageContainer = (HorizontalScrollView) viewSwitcher
+		.findViewById(R.id.backgroundAnimatedImageContainer);
+	bgAnimatedImageContainer.setOnTouchListener(new OnTouchListener() {
 
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return true;
-			}
-		});
+	    @Override
+	    public boolean onTouch(View v, MotionEvent event) {
+		return true;
+	    }
+	});
 
+    }
+
+    @Override
+    public void close() {
+	finish();
+    }
+
+    @Override
+    public int getId() {
+	return R.id.fragmentsContainer;
+    }
+
+    @Override
+    public void onBackPressed() {
+	if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+	    if (mConfirmQuitDialog == null) {
+		mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? new ConfirmQuitDialog(this)
+			: new ConfirmQuitDialog(this, mConfirmQuitDialogView);
+		mConfirmQuitDialog.setClosable(this);
+	    }
+	    mConfirmQuitDialog.show();
+	} else {
+	    super.onBackPressed();
 	}
-	
-	@Override
-	public void close() {
-		finish();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	outState.putBoolean(HIDE_AB_ON_ROTATION_CHANGE, mHideAbOnRotation);
+	super.onSaveInstanceState(outState);
+    }
+
+    protected void setConfirmQuitDialogView(View view) {
+	mConfirmQuitDialogView = view;
+    }
+
+    public View getQuizzLayout() {
+	return mQuizzLayout;
+    }
+
+    public ImageView getBackgroundAnimatedImage() {
+	return mBackgroundAnimatedImage;
+    }
+
+    public QuizzActionBar getQuizzActionBar() {
+	return mQuizzActionBar;
+    }
+
+    /**
+     * Default behaviour is 'false'
+     * 
+     * @param hide
+     */
+    public void setHideAbOnRotationChange(boolean hide) {
+	mHideAbOnRotation = hide;
+    }
+
+    protected abstract String getJsonFilePath();
+
+    // ===========================================================
+    // Inner classes
+    // ===========================================================
+
+    /**
+     * First launch asyncTask<br />
+     * Initiates database and fill it with json file content
+     * 
+     */
+    public class FirstLaunchTask extends AsyncTask<Void, Integer, Void> {
+	private BaseQuizzDAO mBaseQuizzDAO;
+
+	public FirstLaunchTask(DbHelper dbHelper) {
+	    mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
 	}
-	
+
 	@Override
-	public int getId() {
-		return R.id.fragmentsContainer;
+	protected void onPreExecute() {
 	}
-	
+
 	@Override
-	public void onBackPressed() {
-		if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-			if (mConfirmQuitDialog == null) {
-				mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? 
-						new ConfirmQuitDialog(this) : new ConfirmQuitDialog(this, mConfirmQuitDialogView);
-				mConfirmQuitDialog.setClosable(this);
-			}
-			mConfirmQuitDialog.show();
+	protected void onProgressUpdate(Integer... progress) {
+	    if (progress[0] <= 100) {
+		mTvProgress.setText(Integer.toString(progress[0]) + "%");
+		mPbProgressBar.setProgress(progress[0]);
+	    }
+	}
+
+	@Override
+	protected void onPostExecute(Void result) {
+	    viewSwitcher.showNext();
+	}
+
+	@Override
+	protected Void doInBackground(Void... arg0) {
+	    SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+	    Editor editor = sharedPreferences.edit();
+	    editor.putInt(PREF_VERSION_KEY, PREF_VERSION_VALUE);
+	    editor.commit();
+
+	    Gson gson = new Gson();
+	    Type type = new TypeToken<Collection<Section>>() {
+	    }.getType();
+	    try {
+		InputStream is = getResources().getAssets().open(getJsonFilePath());
+		Reader reader = new InputStreamReader(is);
+		List<Section> sections = gson.fromJson(reader, type);
+		if (sections.size() > 0) {
+		    int progress = 0;
+		    int ratio = 100 / sections.size();
+		    for (Section section : sections) {
+			mBaseQuizzDAO.insertSection(section);
+			publishProgress(++progress * ratio);
+		    }
 		} else {
-			super.onBackPressed();
+		    publishProgress(100);
 		}
+	    } catch (IOException e) {
+		Log.e(TAG, e.getMessage(), e);
+	    }
+	    return null;
 	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putBoolean(HIDE_AB_ON_ROTATION_CHANGE, mHideAbOnRotation);
-		super.onSaveInstanceState(outState);
-	}
-	
-	protected void setConfirmQuitDialogView(View view) {
-		mConfirmQuitDialogView = view;
-	}
-	
-	public View getQuizzLayout() {
-		return mQuizzLayout;
-	}
-	
-	public ImageView getBackgroundAnimatedImage() {
-		return mBackgroundAnimatedImage;
-	}
-	
-	public QuizzActionBar getQuizzActionBar() {
-		return mQuizzActionBar;
-	}
-	
-	/**
-	 * Default behaviour is 'false'
-	 * @param hide
-	 */
-	public void setHideAbOnRotationChange(boolean hide) {
-		mHideAbOnRotation = hide;
-	}
-	
-	
-	//////////////////////////////////////////
-	//			loading AsyncTask			//
-	//////////////////////////////////////////
-	
-	private class loadGameTask extends AsyncTask<Void, Integer, Bundle> {
-
-		private int progress = 0;
-		private static final String PREF_VERSION_KEY = "VERSION";
-		private static final int PREF_VERSION_VALUE = 1;
-		private static final String BUNDLE_SECTION_KEY = "SECTION";
-		private SharedPreferences sharedPreferences;
-		private SharedPreferences.Editor editor;
-		
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-		}
-		
-		@Override
-		protected void onProgressUpdate(Integer... progress) {
-			if (progress[0] <= 100) {
-				tv_progress.setText(Integer.toString(progress[0]) + "%");
-				pb_progressBar.setProgress(progress[0]);
-            }
-		}
-		
-		@Override
-		protected void onPostExecute(Bundle result) {
-			 viewSwitcher.showNext();
-			 BaseQuizzApplication.sections = result.getParcelableArrayList(BUNDLE_SECTION_KEY);
-		}
-		
-		@Override
-		protected Bundle doInBackground(Void... arg0) {
-			
-			Bundle bundle = new Bundle();
-			
-			BaseQuizzDAO dao = new BaseQuizzDAO();
-			ArrayList<Section> sections = new ArrayList<Section>();
-			
-			sharedPreferences = getPreferences(MODE_PRIVATE);
-		    if (!sharedPreferences.contains(PREF_VERSION_KEY)) {
-		    	// need to create db
-		    	editor = sharedPreferences.edit();
-			    editor.putInt(PREF_VERSION_KEY, PREF_VERSION_VALUE);
-			    editor.commit();
-		    	Gson gson = new Gson();
-        		Type type = new TypeToken<Collection<Section>>(){}.getType();
-        		InputStream is;
-        		try {
-        			is = getResources().getAssets().open("quizz.json");
-        			Reader reader = new InputStreamReader(is);
-        			sections = gson.fromJson(reader, type);
-        			int ratio = 100 / sections.size();
-        			for (Section section : sections) {
-        				dao.insertSection(section);
-        				publishProgress(++progress * ratio);
-        			}
-        		} catch (IOException e) {
-        			e.printStackTrace();
-        		}
-		    } else if (sharedPreferences.getInt(PREF_VERSION_KEY, 0) < PREF_VERSION_VALUE) {
-		    	// need to upgrade db
-		    } else {
-		    	// retrieve data from db
-    			sections = readDbShowingProgression(dao);
-		    }
-			
-		    bundle.putParcelableArrayList(BUNDLE_SECTION_KEY, sections);
-		    
-            return bundle;
-		}
-		
-		private ArrayList<Section> readDbShowingProgression(BaseQuizzDAO dao) {
-			
-			ArrayList<Section> sections = new ArrayList<Section>();
-			Cursor sectionsCursor = dao.getSections();
-			int ratio = 100 / sectionsCursor.getCount();
-			int lastId = 0;
-			Section section = null;
-			List<Level> levels = new ArrayList<Level>();
-						
-			sectionsCursor.moveToFirst();
-			while (!sectionsCursor.isAfterLast()) {
-				if (sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID))!=lastId
-						&& lastId != 0) {
-					if (section != null) {
-						section.levels.addAll(levels);
-						sections.add(section);
-					}
-					levels.clear();
-				}
-				section = dao.cursorToSection(sectionsCursor);
-				levels.add(dao.cursorToLevel(sectionsCursor));
-				lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
-				publishProgress(++progress * ratio);
-				if (sectionsCursor.isLast()) {
-    				section.levels.addAll(levels);
-					sections.add(section);
-				}
-				sectionsCursor.moveToNext();
-		    }
-			sectionsCursor.close();
-			return sections;
-		}
-		
-	};
-	
+    }
 }

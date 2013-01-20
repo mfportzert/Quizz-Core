@@ -1,67 +1,121 @@
 package com.quizz.core.fragments;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.ArrayAdapter;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.quizz.core.activities.BaseQuizzActivity;
+import com.quizz.core.application.BaseQuizzApplication;
+import com.quizz.core.db.BaseQuizzDAO;
+import com.quizz.core.db.DbHelper;
+import com.quizz.core.interfaces.SectionsLoaderListener;
+import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public abstract class BaseListSectionsFragment extends Fragment {
-	
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+public class BaseListSectionsFragment extends Fragment implements SectionsLoaderListener {
+    
+    protected View mLoadingView;
+    protected ArrayAdapter<Section> mAdapter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+	if (getActivity() instanceof BaseQuizzActivity) {
+	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
+	}
+	super.onActivityCreated(savedInstanceState);
+	Context appContext = getActivity().getApplicationContext();
+	new LoadSectionsTask(((BaseQuizzApplication) appContext).getDbHelper()).execute();
     }
-	
+
+    @Override
+    public void onSectionsLoading() {
+	if (mLoadingView != null) {
+	    mLoadingView.setVisibility(View.VISIBLE);
+	}
+    }
+
+    @Override
+    public void onSectionsLoaded(List<Section> listSections) {
+	if (mAdapter != null) {
+	    mAdapter.clear();
+	    for (Section section : listSections) {
+		section.name = "Level " + section.number;
+		mAdapter.add(section);
+	    }
+	    mAdapter.notifyDataSetChanged();
+
+	    if (mLoadingView != null) {
+		mLoadingView.setVisibility(View.GONE);
+	    }
+	}
+    }
+    
+    // ===========================================================
+    // Inner classes
+    // ===========================================================
+    
+    /**
+     * Load sections from database
+     * 
+     */
+    public class LoadSectionsTask extends AsyncTask<Void, Integer, List<Section>> {
+
+	private BaseQuizzDAO mBaseQuizzDAO;
+
+	public LoadSectionsTask(DbHelper dbHelper) {
+	    mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
+	}
+
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		if (getActivity() instanceof BaseQuizzActivity) {
-			((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
+	protected void onPreExecute() {
+	    onSectionsLoading();
+	    super.onPreExecute();
+	}
+
+	@Override
+	protected List<Section> doInBackground(Void... arg0) {
+	    ArrayList<Section> sections = new ArrayList<Section>();
+	    Cursor sectionsCursor = mBaseQuizzDAO.getSections();
+	    int lastId = 0;
+	    Section section = null;
+	    List<Level> levels = new ArrayList<Level>();
+
+	    sectionsCursor.moveToFirst();
+	    while (!sectionsCursor.isAfterLast()) {
+		int column = sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID);
+		if (sectionsCursor.getInt(column) != lastId && lastId != 0) {
+		    if (section != null) {
+			section.levels.addAll(levels);
+			sections.add(section);
+		    }
+		    levels.clear();
 		}
-		super.onActivityCreated(savedInstanceState);
-		loadSections();
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-	
-	@Override
-    public void onPause() {
-        super.onPause();
-    }
-	
-	@Override
-    public void onResume() {
-        super.onResume();
-    }
-	
-	private void loadSections() {
-		Gson gson = new Gson();
-		Type type = new TypeToken<Collection<Section>>(){}.getType();
-		InputStream is;
-		try {
-			is = getResources().getAssets().open("quizz.json");
-			Reader reader = new InputStreamReader(is);
-			List<Section> sections = gson.fromJson(reader, type);
-	        onSectionsLoaded(sections);
-		} catch (IOException e) {
-			// TODO: Make a reload button for errors
-			e.printStackTrace();
+		section = mBaseQuizzDAO.cursorToSection(sectionsCursor);
+		levels.add(mBaseQuizzDAO.cursorToLevel(sectionsCursor));
+		lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
+		if (sectionsCursor.isLast()) {
+		    for (Level level : levels) {
+			section.levels.add(level);
+		    }
+		    sections.add(section);
 		}
+		sectionsCursor.moveToNext();
+	    }
+	    sectionsCursor.close();
+	    return sections;
 	}
-	
-	protected abstract void onSectionsLoaded(List<Section> listSections);
+
+	@Override
+	protected void onPostExecute(List<Section> result) {
+	    onSectionsLoaded(result);
+	    super.onPostExecute(result);
+	}
+    }
 }
