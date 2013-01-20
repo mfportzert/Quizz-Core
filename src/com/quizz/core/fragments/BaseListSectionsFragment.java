@@ -8,19 +8,29 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.ArrayAdapter;
 
 import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.application.BaseQuizzApplication;
 import com.quizz.core.db.BaseQuizzDAO;
 import com.quizz.core.db.DbHelper;
+import com.quizz.core.interfaces.SectionsLoaderListener;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public abstract class BaseListSectionsFragment extends Fragment {
-
+public abstract class BaseListSectionsFragment extends Fragment implements SectionsLoaderListener {
+    
+    protected View mLoadingView;
+    protected ArrayAdapter<Section> mAdapter;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
+	
+	initAdapter(mAdapter);
+	Context appContext = getActivity().getApplicationContext();
+	new LoadSectionsTask(((BaseQuizzApplication) appContext).getDbHelper()).execute();
     }
 
     @Override
@@ -29,30 +39,38 @@ public abstract class BaseListSectionsFragment extends Fragment {
 	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
 	}
 	super.onActivityCreated(savedInstanceState);
-	Context appContext = getActivity().getApplicationContext();
-	DbHelper dbHelper = ((BaseQuizzApplication) appContext).getDbHelper();
-	new LoadSectionsTask(dbHelper).execute();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
 	super.onSaveInstanceState(outState);
     }
-
+    
     @Override
-    public void onPause() {
-	super.onPause();
+    public void onSectionsLoading() {
+	if (mLoadingView != null) {
+	    mLoadingView.setVisibility(View.VISIBLE);
+	}
     }
 
     @Override
-    public void onResume() {
-	super.onResume();
+    public void onSectionsLoaded(List<Section> listSections) {
+	if (mAdapter != null) {
+	    mAdapter.clear();
+	    for (Section section : listSections) {
+		section.name = "Level " + section.number;
+		mAdapter.add(section);
+	    }
+	    mAdapter.notifyDataSetChanged();
+
+	    if (mLoadingView != null) {
+		mLoadingView.setVisibility(View.GONE);
+	    }
+	}
     }
-
-    protected abstract void onSectionsLoading();
-
-    protected abstract void onSectionsLoaded(List<Section> listSections);
-
+        
+    protected abstract void initAdapter(ArrayAdapter<Section> adapter);
+    
     /**
      * Load sections from database
      * 
