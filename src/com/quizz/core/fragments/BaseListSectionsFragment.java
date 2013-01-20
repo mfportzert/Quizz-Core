@@ -1,67 +1,111 @@
 package com.quizz.core.fragments;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.quizz.core.activities.BaseQuizzActivity;
+import com.quizz.core.application.BaseQuizzApplication;
+import com.quizz.core.db.BaseQuizzDAO;
+import com.quizz.core.db.DbHelper;
+import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
 public abstract class BaseListSectionsFragment extends Fragment {
-	
-	@Override
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	super.onCreate(savedInstanceState);
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		if (getActivity() instanceof BaseQuizzActivity) {
-			((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
-		}
-		super.onActivityCreated(savedInstanceState);
-		loadSections();
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+	if (getActivity() instanceof BaseQuizzActivity) {
+	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
 	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-	
-	@Override
+	super.onActivityCreated(savedInstanceState);
+	Context appContext = getActivity().getApplicationContext();
+	DbHelper dbHelper = ((BaseQuizzApplication) appContext).getDbHelper();
+	new LoadSectionsTask(dbHelper).execute();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+	super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onPause() {
-        super.onPause();
+	super.onPause();
     }
-	
-	@Override
+
+    @Override
     public void onResume() {
-        super.onResume();
+	super.onResume();
     }
-	
-	private void loadSections() {
-		Gson gson = new Gson();
-		Type type = new TypeToken<Collection<Section>>(){}.getType();
-		InputStream is;
-		try {
-			is = getResources().getAssets().open("places.json");
-			Reader reader = new InputStreamReader(is);
-			List<Section> sections = gson.fromJson(reader, type);
-	        onSectionsLoaded(sections);
-		} catch (IOException e) {
-			// TODO: Make a reload button for errors
-			e.printStackTrace();
-		}
+
+    protected abstract void onSectionsLoading();
+
+    protected abstract void onSectionsLoaded(List<Section> listSections);
+
+    /**
+     * Load sections from database
+     * 
+     */
+    public class LoadSectionsTask extends AsyncTask<Void, Integer, List<Section>> {
+
+	private BaseQuizzDAO mBaseQuizzDAO;
+
+	public LoadSectionsTask(DbHelper dbHelper) {
+	    mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
 	}
-	
-	protected abstract void onSectionsLoaded(List<Section> listSections);
+
+	@Override
+	protected void onPreExecute() {
+	    onSectionsLoading();
+	    super.onPreExecute();
+	}
+
+	@Override
+	protected List<Section> doInBackground(Void... arg0) {
+	    ArrayList<Section> sections = new ArrayList<Section>();
+	    Cursor sectionsCursor = mBaseQuizzDAO.getSections();
+	    int lastId = 0;
+	    Section section = null;
+	    List<Level> levels = new ArrayList<Level>();
+
+	    sectionsCursor.moveToFirst();
+	    while (!sectionsCursor.isAfterLast()) {
+		int column = sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID);
+		if (sectionsCursor.getInt(column) != lastId && lastId != 0) {
+		    if (section != null) {
+			section.levels.addAll(levels);
+			sections.add(section);
+		    }
+		    levels.clear();
+		}
+		section = mBaseQuizzDAO.cursorToSection(sectionsCursor);
+		levels.add(mBaseQuizzDAO.cursorToLevel(sectionsCursor));
+		lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
+		if (sectionsCursor.isLast()) {
+		    section.levels.addAll(levels);
+		    sections.add(section);
+		}
+		sectionsCursor.moveToNext();
+	    }
+	    sectionsCursor.close();
+	    return sections;
+	}
+
+	@Override
+	protected void onPostExecute(List<Section> result) {
+	    onSectionsLoaded(result);
+	    super.onPostExecute(result);
+	}
+    }
 }

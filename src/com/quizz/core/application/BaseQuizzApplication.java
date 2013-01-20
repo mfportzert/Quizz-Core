@@ -5,22 +5,22 @@ import android.app.Application;
 import com.quizz.core.db.DbHelper;
 
 public class BaseQuizzApplication extends Application {
-	
+
     private DbHelper mDbHelper;
-    
+
     public synchronized DbHelper getDbHelper() {
-        return mDbHelper;
+	return mDbHelper;
     }
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        mDbHelper = new DbHelper(this);
+	super.onCreate();
+	mDbHelper = new DbHelper(this);
     }
-    
+
     @Override
     public void onTerminate() {
-    	super.onTerminate();
-    	mDbHelper.close();
+	super.onTerminate();
+	mDbHelper.close();
     }
 }

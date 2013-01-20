@@ -17,29 +17,29 @@ import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
 public abstract class BaseLevelFragment extends Fragment {
-	
-	@Override
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	super.onCreate(savedInstanceState);
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-	
-	@Override
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+	super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+	super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onPause() {
-        super.onPause();
+	super.onPause();
     }
-	
-	@Override
+
+    @Override
     public void onResume() {
-        super.onResume();
+	super.onResume();
     }
 }
