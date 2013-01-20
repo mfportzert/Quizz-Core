@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public abstract class BaseGridLevelsFragment extends Fragment {
+public class BaseGridLevelsFragment extends Fragment {
 
     public static final String ARG_SECTION = "BaseGridLevelsFragment.ARG_SECTION";
     
@@ -19,11 +19,6 @@ public abstract class BaseGridLevelsFragment extends Fragment {
 	Section section = getArguments().getParcelable(ARG_SECTION);
 	fillAdapter(section);
     }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-	super.onActivityCreated(savedInstanceState);
-    }
     
     private void fillAdapter(Section section) {
 	mAdapter.clear();
@@ -32,6 +27,4 @@ public abstract class BaseGridLevelsFragment extends Fragment {
 	}
 	mAdapter.notifyDataSetChanged();
     }
-
-    protected abstract void initAdapter(ArrayAdapter<Level> adapter);
 }

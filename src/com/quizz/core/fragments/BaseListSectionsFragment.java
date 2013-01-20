@@ -19,19 +19,10 @@ import com.quizz.core.interfaces.SectionsLoaderListener;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public abstract class BaseListSectionsFragment extends Fragment implements SectionsLoaderListener {
+public class BaseListSectionsFragment extends Fragment implements SectionsLoaderListener {
     
     protected View mLoadingView;
     protected ArrayAdapter<Section> mAdapter;
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-	super.onCreate(savedInstanceState);
-	
-	initAdapter(mAdapter);
-	Context appContext = getActivity().getApplicationContext();
-	new LoadSectionsTask(((BaseQuizzApplication) appContext).getDbHelper()).execute();
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -39,13 +30,10 @@ public abstract class BaseListSectionsFragment extends Fragment implements Secti
 	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
 	}
 	super.onActivityCreated(savedInstanceState);
+	Context appContext = getActivity().getApplicationContext();
+	new LoadSectionsTask(((BaseQuizzApplication) appContext).getDbHelper()).execute();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-	super.onSaveInstanceState(outState);
-    }
-    
     @Override
     public void onSectionsLoading() {
 	if (mLoadingView != null) {
@@ -68,8 +56,10 @@ public abstract class BaseListSectionsFragment extends Fragment implements Secti
 	    }
 	}
     }
-        
-    protected abstract void initAdapter(ArrayAdapter<Section> adapter);
+    
+    // ===========================================================
+    // Inner classes
+    // ===========================================================
     
     /**
      * Load sections from database
@@ -111,7 +101,9 @@ public abstract class BaseListSectionsFragment extends Fragment implements Secti
 		levels.add(mBaseQuizzDAO.cursorToLevel(sectionsCursor));
 		lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
 		if (sectionsCursor.isLast()) {
-		    section.levels.addAll(levels);
+		    for (Level level : levels) {
+			section.levels.add(level);
+		    }
 		    sections.add(section);
 		}
 		sectionsCursor.moveToNext();
