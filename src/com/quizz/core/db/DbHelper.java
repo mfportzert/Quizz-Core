@@ -1,15 +1,6 @@
 package com.quizz.core.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.quizz.core.application.BaseQuizzApplication;
-import com.quizz.core.models.Level;
-import com.quizz.core.models.Section;
-
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -30,6 +21,7 @@ public class DbHelper extends SQLiteOpenHelper {
     
     // COLUMNS
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_UNLOCKED = "unlocked";
     public static final String COLUMN_NUMBER = "number";    
     public static final String COLUMN_LEVEL = "level";
     public static final String COLUMN_IMAGE = "image";
@@ -93,7 +85,8 @@ public class DbHelper extends SQLiteOpenHelper {
     	StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_SECTIONS + " (");
 		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-		sqlBuilder.append(COLUMN_NUMBER + " INTEGER");
+		sqlBuilder.append(COLUMN_NUMBER + " INTEGER, ");
+		sqlBuilder.append(COLUMN_UNLOCKED + " INTEGER");
 		sqlBuilder.append(");");
 		String sql = sqlBuilder.toString();
     	

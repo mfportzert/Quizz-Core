@@ -9,6 +9,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Section implements Parcelable {
 	
+	public static int SECTION_UNLOCKED = 1;
+	public static int SECTION_LOCKED = 0;
+	
 	public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
 		
 		public Section createFromParcel(Parcel parcel) {
