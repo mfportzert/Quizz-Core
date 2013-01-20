@@ -5,15 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -34,12 +33,12 @@ import com.quizz.core.db.DbHelper;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
-import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 import com.quizz.core.widgets.QuizzActionBar;
 
-public class BaseQuizzActivity extends SherlockFragmentActivity implements FragmentContainer,
-	Closeable {
+public abstract class BaseQuizzActivity extends SherlockFragmentActivity implements
+	FragmentContainer, Closeable {
+    private static final String TAG = BaseQuizzActivity.class.getSimpleName();
 
     private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
     private static final String PREF_VERSION_KEY = "VERSION";
@@ -79,6 +78,8 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	    new FirstLaunchTask(dbHelper).execute();
 	} else if (sharedPreferences.getInt(PREF_VERSION_KEY, 0) < PREF_VERSION_VALUE) {
 	    // need to upgrade db
+	} else {
+	    viewSwitcher.showNext();
 	}
     }
 
@@ -175,13 +176,18 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	mHideAbOnRotation = hide;
     }
 
+    protected abstract String getJsonFilePath();
+
+    // ===========================================================
+    // Inner classes
+    // ===========================================================
+
     /**
      * First launch asyncTask<br />
      * Initiates database and fill it with json file content
      * 
      */
     public class FirstLaunchTask extends AsyncTask<Void, Integer, Void> {
-	private int mProgress = 0;
 	private BaseQuizzDAO mBaseQuizzDAO;
 
 	public FirstLaunchTask(DbHelper dbHelper) {
@@ -207,7 +213,6 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 
 	@Override
 	protected Void doInBackground(Void... arg0) {
-	    // need to create db
 	    SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
 	    Editor editor = sharedPreferences.edit();
 	    editor.putInt(PREF_VERSION_KEY, PREF_VERSION_VALUE);
@@ -216,18 +221,22 @@ public class BaseQuizzActivity extends SherlockFragmentActivity implements Fragm
 	    Gson gson = new Gson();
 	    Type type = new TypeToken<Collection<Section>>() {
 	    }.getType();
-	    InputStream is;
 	    try {
-		is = getResources().getAssets().open("places.xml");
+		InputStream is = getResources().getAssets().open(getJsonFilePath());
 		Reader reader = new InputStreamReader(is);
 		List<Section> sections = gson.fromJson(reader, type);
-		int ratio = (sections.size() > 0) ? 100 / sections.size() : 100;
-		for (Section section : sections) {
-		    mBaseQuizzDAO.insertSection(section);
-		    publishProgress(++mProgress * ratio);
+		if (sections.size() > 0) {
+		    int progress = 0;
+		    int ratio = 100 / sections.size();
+		    for (Section section : sections) {
+			mBaseQuizzDAO.insertSection(section);
+			publishProgress(++progress * ratio);
+		    }
+		} else {
+		    publishProgress(100);
 		}
 	    } catch (IOException e) {
-		e.printStackTrace();
+		Log.e(TAG, e.getMessage(), e);
 	    }
 	    return null;
 	}
