@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 
 import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.application.BaseQuizzApplication;
-import com.quizz.core.db.BaseQuizzDAO;
+import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.db.DbHelper;
 import com.quizz.core.interfaces.SectionsLoaderListener;
 import com.quizz.core.models.Level;
@@ -30,8 +30,7 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
 	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
 	}
 	super.onActivityCreated(savedInstanceState);
-	Context appContext = getActivity().getApplicationContext();
-	new LoadSectionsTask(((BaseQuizzApplication) appContext).getDbHelper()).execute();
+	new LoadSectionsTask().execute();
     }
 
     @Override
@@ -67,12 +66,6 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
      */
     public class LoadSectionsTask extends AsyncTask<Void, Integer, List<Section>> {
 
-	private BaseQuizzDAO mBaseQuizzDAO;
-
-	public LoadSectionsTask(DbHelper dbHelper) {
-	    mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
-	}
-
 	@Override
 	protected void onPreExecute() {
 	    onSectionsLoading();
@@ -82,7 +75,7 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
 	@Override
 	protected List<Section> doInBackground(Void... arg0) {
 	    ArrayList<Section> sections = new ArrayList<Section>();
-	    Cursor sectionsCursor = mBaseQuizzDAO.getSections();
+	    Cursor sectionsCursor = QuizzDAO.INSTANCE.getSections();
 	    int lastId = 0;
 	    Section section = null;
 	    List<Level> levels = new ArrayList<Level>();
@@ -97,8 +90,8 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
 		    }
 		    levels.clear();
 		}
-		section = mBaseQuizzDAO.cursorToSection(sectionsCursor);
-		levels.add(mBaseQuizzDAO.cursorToLevel(sectionsCursor));
+		section = QuizzDAO.INSTANCE.cursorToSection(sectionsCursor);
+		levels.add(QuizzDAO.INSTANCE.cursorToLevel(sectionsCursor));
 		lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
 		if (sectionsCursor.isLast()) {
 		    for (Level level : levels) {

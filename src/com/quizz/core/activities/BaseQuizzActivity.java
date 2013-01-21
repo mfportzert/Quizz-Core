@@ -27,9 +27,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.quizz.core.R;
-import com.quizz.core.application.BaseQuizzApplication;
-import com.quizz.core.db.BaseQuizzDAO;
-import com.quizz.core.db.DbHelper;
+import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
@@ -74,8 +72,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 
 	SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
 	if (!sharedPreferences.contains(PREF_VERSION_KEY)) {
-	    DbHelper dbHelper = ((BaseQuizzApplication) getApplicationContext()).getDbHelper();
-	    new FirstLaunchTask(dbHelper).execute();
+	    new FirstLaunchTask().execute();
 	} else if (sharedPreferences.getInt(PREF_VERSION_KEY, 0) < PREF_VERSION_VALUE) {
 	    // need to upgrade db
 	} else {
@@ -121,6 +118,12 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mConfirmQuitDialog.dismiss();
+    }
+    
     @Override
     public void close() {
 	finish();
@@ -188,11 +191,6 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
      * 
      */
     public class FirstLaunchTask extends AsyncTask<Void, Integer, Void> {
-	private BaseQuizzDAO mBaseQuizzDAO;
-
-	public FirstLaunchTask(DbHelper dbHelper) {
-	    mBaseQuizzDAO = new BaseQuizzDAO(dbHelper);
-	}
 
 	@Override
 	protected void onPreExecute() {
@@ -229,7 +227,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 		    int progress = 0;
 		    int ratio = 100 / sections.size();
 		    for (Section section : sections) {
-			mBaseQuizzDAO.insertSection(section);
+			QuizzDAO.INSTANCE.insertSection(section);
 			publishProgress(++progress * ratio);
 		    }
 		} else {

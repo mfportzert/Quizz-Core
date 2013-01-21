@@ -10,14 +10,19 @@ import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 import com.quizz.core.models.Stat;
 
-public class BaseQuizzDAO {
-
+public enum QuizzDAO {
+    INSTANCE;
+    
     private DbHelper mDbHelper;
 
-    public BaseQuizzDAO(DbHelper dbHelper) {
+    public void setDbHelper(DbHelper dbHelper) {
 	mDbHelper = dbHelper;
     }
-
+    
+    public synchronized DbHelper getDbHelper() {
+	return mDbHelper;
+    }
+    
     public void insertSection(Section section) {
 
 	ContentValues sectionValues = new ContentValues();
