@@ -121,7 +121,9 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mConfirmQuitDialog.dismiss();
+        if (mConfirmQuitDialog != null) {
+            mConfirmQuitDialog.dismiss();
+        }
     }
     
     @Override
