@@ -10,6 +10,7 @@ import android.widget.ImageView;
 public class SectionProgressView extends ImageView {
 
     private int mProgressRes = 0;
+private NinePatchDrawable mProgressDrawable;
     private float mProgressValue = 0;
 
     private int mPaddingTop = 0;
@@ -33,6 +34,10 @@ public class SectionProgressView extends ImageView {
 
     public void setProgressRes(int res) {
 	mProgressRes = res;
+	if (res > 0) {
+	    mProgressDrawable = (NinePatchDrawable) getContext().getResources().getDrawable(
+		    mProgressRes);
+	}
     }
 
     public void setProgressValue(float value) {
@@ -50,17 +55,14 @@ public class SectionProgressView extends ImageView {
     protected void onDraw(Canvas canvas) {
 	super.onDraw(canvas);
 
-	if (mProgressBounds != null && mProgressRes > 0) {
-	    NinePatchDrawable npd = (NinePatchDrawable) getContext().getResources().getDrawable(
-		    mProgressRes);
-
+	if (mProgressBounds != null) {
 	    mProgressBounds.left = mPaddingLeft;
 	    mProgressBounds.top = mPaddingTop;
 	    mProgressBounds.right = (int) ((getWidth() - mPaddingRight) * mProgressValue / 100f);
 	    mProgressBounds.bottom = getHeight() - mPaddingBottom;
 
-	    npd.setBounds(mProgressBounds);
-	    npd.draw(canvas);
+	    mProgressDrawable.setBounds(mProgressBounds);
+	    mProgressDrawable.draw(canvas);
 	}
     }
 }
