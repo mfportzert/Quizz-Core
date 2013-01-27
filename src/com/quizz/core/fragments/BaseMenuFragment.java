@@ -14,6 +14,8 @@ import com.quizz.core.utils.NavigationUtils;
 
 public class BaseMenuFragment extends Fragment {
 
+    private boolean mMenuLocked = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class BaseMenuFragment extends Fragment {
     @Override
     public void onResume() {
 	super.onResume();
+	mMenuLocked = false;
     }
 
     protected void initMenuButton(Button button, final Class<?> cls,
@@ -53,8 +56,12 @@ public class BaseMenuFragment extends Fragment {
 
 	    @Override
 	    public void onClick(View v) {
+		if (mMenuLocked) {
+		    return;
+		}
 
 		if (getActivity() instanceof FragmentContainer) {
+		    mMenuLocked = true;
 		    FragmentContainer container = (FragmentContainer) getActivity();
 		    NavigationUtils
 			    .animatedNavigationTo(cls, getActivity().getSupportFragmentManager(),
