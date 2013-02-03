@@ -25,7 +25,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
-import com.quizz.core.R;
 import com.quizz.core.utils.ImageUtils;
 import com.quizz.core.utils.StreamUtils;
 

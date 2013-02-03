@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,8 +23,7 @@ public class QuizzActionBar extends RelativeLayout {
     public static final int MOVE_NORMAL = 250;
 
     private ImageButton mBackButton;
-    private TextView mMiddleText;
-    private TextView mRightText;
+    private ViewGroup mCustomView;
     private View mShadow;
 
     private ObjectAnimator mAbAnimation = new ObjectAnimator();
@@ -52,8 +52,7 @@ public class QuizzActionBar extends RelativeLayout {
     private void init(Context context, TypedArray style) {
 	LayoutInflater.from(context).inflate(R.layout.layout_quizz_action_bar, this, true);
 	mBackButton = (ImageButton) findViewById(R.id.ab_back_button);
-	mMiddleText = (TextView) findViewById(R.id.ab_middle_text);
-	mRightText = (TextView) findViewById(R.id.ab_right_text);
+	mCustomView = (ViewGroup) findViewById(R.id.ab_custom_view_container);
 	/*
 	 * GetParent always null..
 	 * 
@@ -91,14 +90,17 @@ public class QuizzActionBar extends RelativeLayout {
 	return mBackButton;
     }
 
-    public TextView getMiddleText() {
-	return mMiddleText;
+    public View getCustomViewContainer() {
+	return mCustomView;
     }
 
-    public TextView getRightText() {
-	return mRightText;
+    public void setCustomView(int layoutRes) {
+	mCustomView.removeAllViews();
+	
+	LayoutInflater inflater = LayoutInflater.from(getContext());
+	inflater.inflate(layoutRes, mCustomView);
     }
-
+    
     private void animate(float[] movements, int duration, boolean bounce, AnimatorListener listener) {
 	if (mAbAnimation.isRunning()) {
 	    mAbAnimation.cancel();

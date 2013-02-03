@@ -7,9 +7,4 @@
     <item type="id" name="dialog_positive_button" />
     <item type="id" name="dialog_negative_button" />
     
-    <!-- Top Action Bar -->
-    <item type="id" name="ab_back_button" />
-    <item type="id" name="ab_middle_text" />
-    <item type="id" name="ab_right_text" />
-    
 </resources>
