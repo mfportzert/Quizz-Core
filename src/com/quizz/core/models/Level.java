@@ -7,6 +7,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Level implements Parcelable {
 
+    public static final String DIFFICULTY_EASY = "easy";
+    public static final String DIFFICULTY_MEDIUM = "medium";
+    public static final String DIFFICULTY_HARD = "hard";
+    
     public static int STATUS_LEVEL_CLEAR = 1;
     public static int STATUS_LEVEL_UNCLEAR = 0;
 
