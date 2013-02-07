@@ -15,9 +15,8 @@ public class DbHelper extends SQLiteOpenHelper {
     // TABLES
     public static final String TABLE_SECTIONS = "sections";
     public static final String TABLE_LEVELS = "levels";
-    // public static final String TABLE_HINTS = "hints";
-    // public static final String TABLE_RESPONSES = "responses";
-
+    public static final String TABLE_HINTS = "hints";
+    
     // COLUMNS
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_UNLOCKED = "unlocked";
@@ -27,13 +26,11 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_DIFFICULTY = "difficulty";
     public static final String COLUMN_LINK = "link";
-    // public static final String COLUMN_HINT = "hint";
-    public static final String COLUMN_HINT1 = "hint1";
-    public static final String COLUMN_HINT2 = "hint2";
-    public static final String COLUMN_HINT3 = "hint3";
-    public static final String COLUMN_HINT4 = "hint4";
+    public static final String COLUMN_HINT = "hint";
+    public static final String COLUMN_HINT_TYPE = "hint_type";
     public static final String COLUMN_RESPONSE = "response";
     public static final String COLUMN_STATUS = "status";
+    public static final String COLUMN_PARTIAL_RESPONSE = "partial_response";
     public static final String COLUMN_FK_SECTION = "fk_section_id";
     public static final String COLUMN_FK_LEVEL = "fk_level_id";
 
@@ -43,14 +40,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
 	String sectionsTable = getCreateSectionsTableQuery();
 	String levelsTable = getCreateLevelsTableQuery();
-	// String hintsTable = getCreateHintsTableQuery();
-	// String responsesTable = getCreateResponsesTableQuery();
+	 String hintsTable = getCreateHintsTableQuery();
 	db.execSQL(sectionsTable);
 	db.execSQL(levelsTable);
-	// db.execSQL(hintsTable);
-	// db.execSQL(responsesTable);
+	 db.execSQL(hintsTable);
     }
 
     // Upgrading database
@@ -58,8 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	db.execSQL("DROP TABLE IF EXISTS " + TABLE_SECTIONS);
 	db.execSQL("DROP TABLE IF EXISTS " + TABLE_LEVELS);
-	// db.execSQL("DROP TABLE IF EXISTS " + TABLE_HINTS);
-	// db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESPONSES);
+	db.execSQL("DROP TABLE IF EXISTS " + TABLE_HINTS);
 	onCreate(db);
     }
 
@@ -82,13 +77,10 @@ public class DbHelper extends SQLiteOpenHelper {
 	sqlBuilder.append(COLUMN_LEVEL + " TEXT, ");
 	sqlBuilder.append(COLUMN_IMAGE + " TEXT, ");
 	sqlBuilder.append(COLUMN_DESCRIPTION + " TEXT, ");
-	sqlBuilder.append(COLUMN_HINT1 + " TEXT, ");
-	sqlBuilder.append(COLUMN_HINT2 + " TEXT, ");
-	sqlBuilder.append(COLUMN_HINT3 + " TEXT, ");
-	sqlBuilder.append(COLUMN_HINT4 + " TEXT, ");
 	sqlBuilder.append(COLUMN_DIFFICULTY + " TEXT, ");
 	sqlBuilder.append(COLUMN_LINK + " TEXT, ");
 	sqlBuilder.append(COLUMN_RESPONSE + " TEXT, ");
+	sqlBuilder.append(COLUMN_PARTIAL_RESPONSE + " TEXT, ");
 	sqlBuilder.append(COLUMN_STATUS + " INTEGER, ");
 	sqlBuilder.append(COLUMN_FK_SECTION + " INTEGER");
 	sqlBuilder.append(");");
@@ -96,30 +88,19 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	return sql;
     }
-
-    // private String getCreateHintsTableQuery() {
-    // StringBuilder sqlBuilder = new StringBuilder();
-    // sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_HINTS + " (");
-    // sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-    // sqlBuilder.append(COLUMN_HINT + " TEXT, ");
-    // sqlBuilder.append(COLUMN_FK_LEVEL + " INTEGER");
-    // sqlBuilder.append(");");
-    // String sql = sqlBuilder.toString();
-    //
-    // return sql;
-    // }
-
-    // private String getCreateResponsesTableQuery() {
-    // StringBuilder sqlBuilder = new StringBuilder();
-    // sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_RESPONSES +
-    // " (");
-    // sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-    // sqlBuilder.append(COLUMN_RESPONSE + " TEXT, ");
-    // sqlBuilder.append(COLUMN_FK_LEVEL + " INTEGER");
-    // sqlBuilder.append(");");
-    // String sql = sqlBuilder.toString();
-    //
-    // return sql;
-    // }
+    
+    private String getCreateHintsTableQuery() {
+    	StringBuilder sqlBuilder = new StringBuilder();
+		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_HINTS + " (");
+		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
+		sqlBuilder.append(COLUMN_HINT + " TEXT, ");
+		sqlBuilder.append(COLUMN_HINT_TYPE + " INTEGER, ");
+		sqlBuilder.append(COLUMN_UNLOCKED + " INTEGER, ");
+		sqlBuilder.append(COLUMN_FK_LEVEL + " INTEGER");
+		sqlBuilder.append(");");
+		String sql = sqlBuilder.toString();
+    	
+    	return sql;
+    }   
 
 }

@@ -10,6 +10,8 @@ public class Stat implements Parcelable {
 	private int done;
 	private int total;
 	private int progressInPercent;
+	private int icon;
+	private boolean isAchievement = false;
 	
 	public static final Parcelable.Creator<Stat> CREATOR = new Parcelable.Creator<Stat>() {
 		
@@ -32,12 +34,13 @@ public class Stat implements Parcelable {
 //		parcel.readList(this.levels, Stat.class.getClassLoader());
 	}
 	
-	public Stat(String label, int done, int total) {
+	public Stat(int icon, String label, int done, int total, boolean isAchievement) {
+		this.setIcon(icon);
 		this.setLabel(label);
 		this.setDone(done);
 		this.setTotal(total);
 		this.setProgressInPercent(done / (total != 0 ? total : 1) * 100);
-		Log.d("bla", String.valueOf(done / (total != 0 ? total : 1) * 100));
+		this.setAchievement(isAchievement);
 	}
 
 	@Override
@@ -83,6 +86,22 @@ public class Stat implements Parcelable {
 
 	public void setProgressInPercent(int progressInPercent) {
 		this.progressInPercent = progressInPercent;
+	}
+
+	public int getIcon() {
+		return icon;
+	}
+
+	public void setIcon(int icon) {
+		this.icon = icon;
+	}
+
+	public boolean isAchievement() {
+		return isAchievement;
+	}
+
+	public void setAchievement(boolean isAchievement) {
+		this.isAchievement = isAchievement;
 	}
 
 }
