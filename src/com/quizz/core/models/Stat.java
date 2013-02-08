@@ -2,7 +2,6 @@ package com.quizz.core.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class Stat implements Parcelable {
 
@@ -12,28 +11,28 @@ public class Stat implements Parcelable {
 	private int progressInPercent;
 	private int icon;
 	private boolean isAchievement = false;
-	
+
 	public static final Parcelable.Creator<Stat> CREATOR = new Parcelable.Creator<Stat>() {
-		
+
 		public Stat createFromParcel(Parcel parcel) {
 			return new Stat(parcel);
-        }
-		
-        public Stat[] newArray(int size) {
-        	return new Stat[size];
-        }
+		}
+
+		public Stat[] newArray(int size) {
+			return new Stat[size];
+		}
 	};
-	
+
 	/**
 	 * @param parcel
 	 */
 	public Stat(Parcel parcel) {
-		
-//		this.number = parcel.readInt();
-//		this.name = parcel.readString();
-//		parcel.readList(this.levels, Stat.class.getClassLoader());
+
+		// this.number = parcel.readInt();
+		// this.name = parcel.readString();
+		// parcel.readList(this.levels, Stat.class.getClassLoader());
 	}
-	
+
 	public Stat(int icon, String label, int done, int total, boolean isAchievement) {
 		this.setIcon(icon);
 		this.setLabel(label);
@@ -50,10 +49,10 @@ public class Stat implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		
-//		dest.writeInt(this.number);
-//		dest.writeString(this.name);
-//		dest.writeList(this.levels);
+
+		// dest.writeInt(this.number);
+		// dest.writeString(this.name);
+		// dest.writeList(this.levels);
 	}
 
 	public String getLabel() {
