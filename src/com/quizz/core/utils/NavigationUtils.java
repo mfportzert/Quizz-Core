@@ -13,8 +13,9 @@ import com.quizz.core.interfaces.FragmentContainer;
 public class NavigationUtils {
 
     public static void animatedNavigationTo(final Class<?> cls,
-	    final FragmentManager fragmentManager, final FragmentContainer container,
-	    final boolean addToStack, final FragmentTransaction transaction, AnimatorSet animatorSet) {
+	    final FragmentManager fragmentManager,
+	    final FragmentContainer container, final boolean addToStack,
+	    final FragmentTransaction transaction, AnimatorSet animatorSet) {
 
 	if (animatorSet != null) {
 	    animatorSet.addListener(new AnimatorListener() {
@@ -29,8 +30,8 @@ public class NavigationUtils {
 
 		@Override
 		public void onAnimationEnd(Animator animation) {
-		    NavigationUtils.directNavigationTo(cls, fragmentManager, container, addToStack,
-			    transaction);
+		    NavigationUtils.directNavigationTo(cls, fragmentManager,
+			    container, addToStack, transaction);
 		}
 
 		@Override
@@ -41,16 +42,19 @@ public class NavigationUtils {
 	}
     }
 
-    public static void directNavigationTo(Class<?> cls, FragmentManager fragmentManager,
-	    FragmentContainer container, boolean addToStack, FragmentTransaction transaction) {
-	directNavigationTo(cls, fragmentManager, container, addToStack, transaction, null);
+    public static void directNavigationTo(Class<?> cls,
+	    FragmentManager fragmentManager, FragmentContainer container,
+	    boolean addToStack, FragmentTransaction transaction) {
+	directNavigationTo(cls, fragmentManager, container, addToStack,
+		transaction, null);
     }
-    
-    public static void directNavigationTo(Class<?> cls, FragmentManager fragmentManager,
-	    FragmentContainer container, boolean addToStack, FragmentTransaction transaction,
-	    Bundle args) {
+
+    public static void directNavigationTo(Class<?> cls,
+	    FragmentManager fragmentManager, FragmentContainer container,
+	    boolean addToStack, FragmentTransaction transaction, Bundle args) {
 	try {
-	    Fragment fragment = fragmentManager.findFragmentByTag(cls.getSimpleName());
+	    Fragment fragment = fragmentManager.findFragmentByTag(cls
+		    .getSimpleName());
 	    if (fragment == null) {
 		fragment = (Fragment) cls.newInstance();
 	    }
@@ -63,7 +67,8 @@ public class NavigationUtils {
 		if (args != null) {
 		    fragment.setArguments(args);
 		}
-		transaction.replace(container.getId(), fragment, cls.getSimpleName());
+		transaction.replace(container.getId(), fragment,
+			cls.getSimpleName());
 		transaction.commit();
 	    }
 

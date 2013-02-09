@@ -10,7 +10,8 @@ public class ImageUtils {
 
     public static Drawable createFromAsset(Context context, String filePath) {
 	try {
-	    return Drawable.createFromStream(context.getAssets().open(filePath), null);
+	    return Drawable.createFromStream(
+		    context.getAssets().open(filePath), null);
 	} catch (IOException e) {
 	    Log.e("ImageUtils", e.getMessage(), e);
 	}

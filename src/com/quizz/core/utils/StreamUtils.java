@@ -15,7 +15,7 @@ public class StreamUtils {
 
     public static void copyStream(InputStream is, OutputStream os) {
 	final int buffer_size = 1024;
-	
+
 	try {
 	    byte[] bytes = new byte[buffer_size];
 	    for (;;) {

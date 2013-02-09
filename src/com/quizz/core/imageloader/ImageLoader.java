@@ -56,16 +56,21 @@ public class ImageLoader {
 	mExecutorService = Executors.newFixedThreadPool(5);
     }
 
-    public void displayImage(String url, ImageView imageView, ImageType imageType) {
-	this.displayImage(url, imageView, imageType, mDefaultDrawableId, mDefaultImageLoaderListener);
+    public void displayImage(String url, ImageView imageView,
+	    ImageType imageType) {
+	this.displayImage(url, imageView, imageType, mDefaultDrawableId,
+		mDefaultImageLoaderListener);
     }
 
-    public void displayImage(String url, ImageView imageView, ImageType imageType, ImageLoaderListener listener) {
-	this.displayImage(url, imageView, imageType, mDefaultDrawableId, listener);
+    public void displayImage(String url, ImageView imageView,
+	    ImageType imageType, ImageLoaderListener listener) {
+	this.displayImage(url, imageView, imageType, mDefaultDrawableId,
+		listener);
     }
-    
-    public void displayImage(String url, ImageView imageView, ImageType imageType,
-	    int defaultDrawableResId, ImageLoaderListener listener) {
+
+    public void displayImage(String url, ImageView imageView,
+	    ImageType imageType, int defaultDrawableResId,
+	    ImageLoaderListener listener) {
 	mImageViews.put(imageView, url);
 	Bitmap bitmap = mMemoryCache.get(url);
 	if (bitmap != null) {
@@ -74,9 +79,12 @@ public class ImageLoader {
 		listener.onImageLoaded(bitmap, url, imageView, imageType, true);
 	    }
 	} else {
-	    queuePhoto(url, imageView, imageType, defaultDrawableResId, listener);
+	    queuePhoto(url, imageView, imageType, defaultDrawableResId,
+		    listener);
 	    if (defaultDrawableResId > 0) {
 		imageView.setImageResource(defaultDrawableResId);
+	    } else {
+		imageView.setImageDrawable(null);
 	    }
 	}
     }
@@ -104,9 +112,11 @@ public class ImageLoader {
 	return null;
     }
 
-    private void queuePhoto(String url, ImageView imageView, ImageType imageType,
-	    int defaultDrawableResId, ImageLoaderListener listener) {
-	PhotoToLoad p = new PhotoToLoad(url, imageView, imageType, defaultDrawableResId, listener);
+    private void queuePhoto(String url, ImageView imageView,
+	    ImageType imageType, int defaultDrawableResId,
+	    ImageLoaderListener listener) {
+	PhotoToLoad p = new PhotoToLoad(url, imageView, imageType,
+		defaultDrawableResId, listener);
 	mExecutorService.submit(new PhotosLoader(p));
     }
 
@@ -125,7 +135,8 @@ public class ImageLoader {
 		// from web
 		URL imageUrl = new URL(photoToLoad.url);
 
-		HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
+		HttpURLConnection conn = (HttpURLConnection) imageUrl
+			.openConnection();
 		conn.setConnectTimeout(30000);
 		conn.setReadTimeout(30000);
 		conn.setInstanceFollowRedirects(true);
@@ -145,13 +156,16 @@ public class ImageLoader {
 
 	    // LOCAL
 	default:
-	    Drawable drawable = ImageUtils.createFromAsset(photoToLoad.imageView.getContext(),
-		    photoToLoad.url);
+	    Drawable drawable = ImageUtils.createFromAsset(
+		    photoToLoad.imageView.getContext(), photoToLoad.url);
 
 	    if (mHQLocalBitmap) {
-		drawable = new BitmapDrawable(photoToLoad.imageView.getContext().getResources(),
-			Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(),
-				drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), true));
+		drawable = new BitmapDrawable(photoToLoad.imageView
+			.getContext().getResources(),
+			Bitmap.createScaledBitmap(
+				((BitmapDrawable) drawable).getBitmap(),
+				drawable.getIntrinsicWidth(),
+				drawable.getIntrinsicHeight(), true));
 
 		drawable.setFilterBitmap(true);
 		((BitmapDrawable) drawable).setAntiAlias(true);
@@ -174,7 +188,8 @@ public class ImageLoader {
 	    int width_tmp = o.outWidth, height_tmp = o.outHeight;
 	    int scale = 1;
 	    while (true) {
-		if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+		if (width_tmp / 2 < REQUIRED_SIZE
+			|| height_tmp / 2 < REQUIRED_SIZE)
 		    break;
 		width_tmp /= 2;
 		height_tmp /= 2;
@@ -200,15 +215,17 @@ public class ImageLoader {
 	public int defaultDrawableResId = 0;
 	public ImageLoaderListener listener;
 
-	public PhotoToLoad(String url, ImageView imageView, ImageType imageType, ImageLoaderListener listener) {
+	public PhotoToLoad(String url, ImageView imageView,
+		ImageType imageType, ImageLoaderListener listener) {
 	    this.url = url;
 	    this.imageView = imageView;
 	    this.imageType = imageType;
 	    this.listener = listener;
 	}
 
-	public PhotoToLoad(String url, ImageView imageView, ImageType imageType,
-		int defaultDrawableResId, ImageLoaderListener listener) {
+	public PhotoToLoad(String url, ImageView imageView,
+		ImageType imageType, int defaultDrawableResId,
+		ImageLoaderListener listener) {
 	    this(url, imageView, imageType, listener);
 	    this.defaultDrawableResId = defaultDrawableResId;
 	}
@@ -266,8 +283,8 @@ public class ImageLoader {
 	    }
 
 	    if (photoToLoad.listener != null) {
-		photoToLoad.listener.onImageLoaded(bitmap, photoToLoad.url, photoToLoad.imageView,
-			photoToLoad.imageType, false);
+		photoToLoad.listener.onImageLoaded(bitmap, photoToLoad.url,
+			photoToLoad.imageView, photoToLoad.imageType, false);
 	    }
 	}
     }
@@ -286,9 +303,10 @@ public class ImageLoader {
      * 
      */
     public interface ImageLoaderListener {
-	public void onStartImageLoading(Bitmap bitmap, String url, ImageView imageView,
-		ImageType imageType);
-	public void onImageLoaded(Bitmap bitmap, String url, ImageView imageView,
-		ImageType imageType, boolean fromCache);
+	public void onStartImageLoading(Bitmap bitmap, String url,
+		ImageView imageView, ImageType imageType);
+
+	public void onImageLoaded(Bitmap bitmap, String url,
+		ImageView imageView, ImageType imageType, boolean fromCache);
     }
 }

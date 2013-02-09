@@ -36,8 +36,8 @@ public class QuizzActionBar extends RelativeLayout {
 
     public QuizzActionBar(Context context, AttributeSet attrs) {
 	super(context, attrs);
-	TypedArray style = context
-		.obtainStyledAttributes(attrs, R.styleable.widgets_QuizzActionBar);
+	TypedArray style = context.obtainStyledAttributes(attrs,
+		R.styleable.widgets_QuizzActionBar);
 	init(context, style);
     }
 
@@ -50,7 +50,8 @@ public class QuizzActionBar extends RelativeLayout {
 
     // @SuppressWarnings("deprecation")
     private void init(Context context, TypedArray style) {
-	LayoutInflater.from(context).inflate(R.layout.layout_quizz_action_bar, this, true);
+	LayoutInflater.from(context).inflate(R.layout.layout_quizz_action_bar,
+		this, true);
 	mBackButton = (ImageButton) findViewById(R.id.ab_back_button);
 	mCustomView = (ViewGroup) findViewById(R.id.ab_custom_view_container);
 	/*
@@ -96,12 +97,13 @@ public class QuizzActionBar extends RelativeLayout {
 
     public void setCustomView(int layoutRes) {
 	mCustomView.removeAllViews();
-	
+
 	LayoutInflater inflater = LayoutInflater.from(getContext());
 	inflater.inflate(layoutRes, mCustomView);
     }
-    
-    private void animate(float[] movements, int duration, boolean bounce, AnimatorListener listener) {
+
+    private void animate(float[] movements, int duration, boolean bounce,
+	    AnimatorListener listener) {
 	if (mAbAnimation.isRunning()) {
 	    mAbAnimation.cancel();
 	}
@@ -117,11 +119,13 @@ public class QuizzActionBar extends RelativeLayout {
 		mShadowAnimation.cancel();
 	    }
 
-	    mShadowAnimation = ObjectAnimator.ofFloat(mShadow, "translationY", movements);
+	    mShadowAnimation = ObjectAnimator.ofFloat(mShadow, "translationY",
+		    movements);
 	    mShadowAnimation.setDuration(duration);
 
 	    if (bounce) {
-		AnimatorUtils.bounceAnimator(mShadowAnimation, movements, 5, 100);
+		AnimatorUtils.bounceAnimator(mShadowAnimation, movements, 5,
+			100);
 	    } else {
 		mShadowAnimation.start();
 	    }
@@ -153,12 +157,14 @@ public class QuizzActionBar extends RelativeLayout {
     }
 
     public void show(int duration) {
-	animate(new float[] { -getBarHeight(), 0 }, duration, (duration > MOVE_DIRECT) ? true
-		: false, mAbShowAnimatorListener);
+	animate(new float[] { -getBarHeight(), 0 }, duration,
+		(duration > MOVE_DIRECT) ? true : false,
+		mAbShowAnimatorListener);
     }
 
     public void hide(int duration) {
-	animate(new float[] { 0, -getBarHeight() }, duration, false, mAbHideAnimatorListener);
+	animate(new float[] { 0, -getBarHeight() }, duration, false,
+		mAbHideAnimatorListener);
     }
 
     // ===========================================================

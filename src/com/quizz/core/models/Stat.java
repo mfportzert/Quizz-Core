@@ -5,102 +5,103 @@ import android.os.Parcelable;
 
 public class Stat implements Parcelable {
 
-	private String label;
-	private int done;
-	private int total;
-	private int progressInPercent;
-	private int icon;
-	private boolean isAchievement = false;
+    private String label;
+    private int done;
+    private int total;
+    private int progressInPercent;
+    private int icon;
+    private boolean isAchievement = false;
 
-	public static final Parcelable.Creator<Stat> CREATOR = new Parcelable.Creator<Stat>() {
+    public static final Parcelable.Creator<Stat> CREATOR = new Parcelable.Creator<Stat>() {
 
-		public Stat createFromParcel(Parcel parcel) {
-			return new Stat(parcel);
-		}
-
-		public Stat[] newArray(int size) {
-			return new Stat[size];
-		}
-	};
-
-	/**
-	 * @param parcel
-	 */
-	public Stat(Parcel parcel) {
-
-		// this.number = parcel.readInt();
-		// this.name = parcel.readString();
-		// parcel.readList(this.levels, Stat.class.getClassLoader());
+	public Stat createFromParcel(Parcel parcel) {
+	    return new Stat(parcel);
 	}
 
-	public Stat(int icon, String label, int done, int total, boolean isAchievement) {
-		this.setIcon(icon);
-		this.setLabel(label);
-		this.setDone(done);
-		this.setTotal(total);
-		this.setProgressInPercent(done / (total != 0 ? total : 1) * 100);
-		this.setAchievement(isAchievement);
+	public Stat[] newArray(int size) {
+	    return new Stat[size];
 	}
+    };
 
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+    /**
+     * @param parcel
+     */
+    public Stat(Parcel parcel) {
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
+	// this.number = parcel.readInt();
+	// this.name = parcel.readString();
+	// parcel.readList(this.levels, Stat.class.getClassLoader());
+    }
 
-		// dest.writeInt(this.number);
-		// dest.writeString(this.name);
-		// dest.writeList(this.levels);
-	}
+    public Stat(int icon, String label, int done, int total,
+	    boolean isAchievement) {
+	this.setIcon(icon);
+	this.setLabel(label);
+	this.setDone(done);
+	this.setTotal(total);
+	this.setProgressInPercent(done / (total != 0 ? total : 1) * 100);
+	this.setAchievement(isAchievement);
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    @Override
+    public int describeContents() {
+	return 0;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
 
-	public int getDone() {
-		return done;
-	}
+	// dest.writeInt(this.number);
+	// dest.writeString(this.name);
+	// dest.writeList(this.levels);
+    }
 
-	public void setDone(int done) {
-		this.done = done;
-	}
+    public String getLabel() {
+	return label;
+    }
 
-	public int getTotal() {
-		return total;
-	}
+    public void setLabel(String label) {
+	this.label = label;
+    }
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    public int getDone() {
+	return done;
+    }
 
-	public int getProgressInPercent() {
-		return progressInPercent;
-	}
+    public void setDone(int done) {
+	this.done = done;
+    }
 
-	public void setProgressInPercent(int progressInPercent) {
-		this.progressInPercent = progressInPercent;
-	}
+    public int getTotal() {
+	return total;
+    }
 
-	public int getIcon() {
-		return icon;
-	}
+    public void setTotal(int total) {
+	this.total = total;
+    }
 
-	public void setIcon(int icon) {
-		this.icon = icon;
-	}
+    public int getProgressInPercent() {
+	return progressInPercent;
+    }
 
-	public boolean isAchievement() {
-		return isAchievement;
-	}
+    public void setProgressInPercent(int progressInPercent) {
+	this.progressInPercent = progressInPercent;
+    }
 
-	public void setAchievement(boolean isAchievement) {
-		this.isAchievement = isAchievement;
-	}
+    public int getIcon() {
+	return icon;
+    }
+
+    public void setIcon(int icon) {
+	this.icon = icon;
+    }
+
+    public boolean isAchievement() {
+	return isAchievement;
+    }
+
+    public void setAchievement(boolean isAchievement) {
+	this.isAchievement = isAchievement;
+    }
 
 }

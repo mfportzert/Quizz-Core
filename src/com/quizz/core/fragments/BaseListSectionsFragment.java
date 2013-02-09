@@ -19,15 +19,17 @@ import com.quizz.core.interfaces.SectionsLoaderListener;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public class BaseListSectionsFragment extends Fragment implements SectionsLoaderListener {
-    
+public class BaseListSectionsFragment extends Fragment implements
+	SectionsLoaderListener {
+
     protected View mLoadingView;
     protected ArrayAdapter<Section> mAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 	if (getActivity() instanceof BaseQuizzActivity) {
-	    ((BaseQuizzActivity) getActivity()).setHideAbOnRotationChange(false);
+	    ((BaseQuizzActivity) getActivity())
+		    .setHideAbOnRotationChange(false);
 	}
 	super.onActivityCreated(savedInstanceState);
 	new LoadSectionsTask().execute();
@@ -55,16 +57,17 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
 	    }
 	}
     }
-    
+
     // ===========================================================
     // Inner classes
     // ===========================================================
-    
+
     /**
      * Load sections from database
      * 
      */
-    public class LoadSectionsTask extends AsyncTask<Void, Integer, List<Section>> {
+    public class LoadSectionsTask extends
+	    AsyncTask<Void, Integer, List<Section>> {
 
 	@Override
 	protected void onPreExecute() {
@@ -92,7 +95,8 @@ public class BaseListSectionsFragment extends Fragment implements SectionsLoader
 		}
 		section = QuizzDAO.INSTANCE.cursorToSection(sectionsCursor);
 		levels.add(QuizzDAO.INSTANCE.cursorToLevel(sectionsCursor));
-		lastId = sectionsCursor.getInt(sectionsCursor.getColumnIndex(DbHelper.COLUMN_ID));
+		lastId = sectionsCursor.getInt(sectionsCursor
+			.getColumnIndex(DbHelper.COLUMN_ID));
 		if (sectionsCursor.isLast()) {
 		    for (Level level : levels) {
 			section.levels.add(level);

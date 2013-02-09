@@ -34,8 +34,8 @@ import com.quizz.core.interfaces.FragmentContainer;
 import com.quizz.core.models.Section;
 import com.quizz.core.widgets.QuizzActionBar;
 
-public abstract class BaseQuizzActivity extends SherlockFragmentActivity implements
-	FragmentContainer, Closeable {
+public abstract class BaseQuizzActivity extends SherlockFragmentActivity
+	implements FragmentContainer, Closeable {
     private static final String TAG = BaseQuizzActivity.class.getSimpleName();
 
     private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
@@ -62,10 +62,10 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 	super.onCreate(savedInstanceState);
 
 	viewSwitcher = new ViewSwitcher(BaseQuizzActivity.this);
-	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.loading_screen,
-		null));
-	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this, R.layout.activity_quizz,
-		null));
+	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this,
+		R.layout.loading_screen, null));
+	viewSwitcher.addView(ViewSwitcher.inflate(BaseQuizzActivity.this,
+		R.layout.activity_quizz, null));
 	setContentView(viewSwitcher);
 	buildLoadingLayout();
 	buildGameLayout(savedInstanceState);
@@ -82,7 +82,8 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 
     private void buildLoadingLayout() {
 	mTvProgress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);
-	mPbProgressBar = (ProgressBar) viewSwitcher.findViewById(R.id.pb_progressbar);
+	mPbProgressBar = (ProgressBar) viewSwitcher
+		.findViewById(R.id.pb_progressbar);
 	mPbProgressBar.setMax(100);
     }
 
@@ -95,7 +96,8 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 	mQuizzActionBar.setShadowView(shadowView);
 
 	if (savedInstanceState != null) {
-	    mHideAbOnRotation = savedInstanceState.getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
+	    mHideAbOnRotation = savedInstanceState
+		    .getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
 	    if (mHideAbOnRotation) {
 		mQuizzActionBar.hide(QuizzActionBar.MOVE_DIRECT);
 	    }
@@ -120,12 +122,12 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if (mConfirmQuitDialog != null) {
-            mConfirmQuitDialog.dismiss();
-        }
+	super.onDestroy();
+	if (mConfirmQuitDialog != null) {
+	    mConfirmQuitDialog.dismiss();
+	}
     }
-    
+
     @Override
     public void close() {
 	finish();
@@ -140,8 +142,9 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
     public void onBackPressed() {
 	if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
 	    if (mConfirmQuitDialog == null) {
-		mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? new ConfirmQuitDialog(this)
-			: new ConfirmQuitDialog(this, mConfirmQuitDialogView);
+		mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? new ConfirmQuitDialog(
+			this) : new ConfirmQuitDialog(this,
+			mConfirmQuitDialogView);
 		mConfirmQuitDialog.setClosable(this);
 	    }
 	    mConfirmQuitDialog.show();
@@ -222,7 +225,8 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity impleme
 	    Type type = new TypeToken<Collection<Section>>() {
 	    }.getType();
 	    try {
-		InputStream is = getResources().getAssets().open(getJsonFilePath());
+		InputStream is = getResources().getAssets().open(
+			getJsonFilePath());
 		Reader reader = new InputStreamReader(is);
 		List<Section> sections = gson.fromJson(reader, type);
 		if (sections.size() > 0) {

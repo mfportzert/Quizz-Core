@@ -5,8 +5,8 @@ import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
 
 public class AnimatorUtils {
 
-    public static void bounceAnimator(ObjectAnimator baseMovement, float[] movementValues,
-	    int bounceDistance, int bounceSpeed) {
+    public static void bounceAnimator(ObjectAnimator baseMovement,
+	    float[] movementValues, int bounceDistance, int bounceSpeed) {
 	if (baseMovement == null) {
 	    return;
 	}
@@ -20,12 +20,14 @@ public class AnimatorUtils {
 	    }
 	}
 
-	ObjectAnimator bounceStart = ObjectAnimator.ofFloat(baseMovement.getTarget(),
-		baseMovement.getPropertyName(), startBouncePosition, endBouncePosition);
+	ObjectAnimator bounceStart = ObjectAnimator.ofFloat(
+		baseMovement.getTarget(), baseMovement.getPropertyName(),
+		startBouncePosition, endBouncePosition);
 	bounceStart.setDuration(100);
 
-	ObjectAnimator bounceEnd = ObjectAnimator.ofFloat(baseMovement.getTarget(),
-		baseMovement.getPropertyName(), endBouncePosition, startBouncePosition);
+	ObjectAnimator bounceEnd = ObjectAnimator.ofFloat(
+		baseMovement.getTarget(), baseMovement.getPropertyName(),
+		endBouncePosition, startBouncePosition);
 	bounceEnd.setDuration(100);
 
 	AnimatorSet signAnimatorSet = new AnimatorSet();

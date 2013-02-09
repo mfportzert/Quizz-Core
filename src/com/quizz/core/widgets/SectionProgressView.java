@@ -10,7 +10,7 @@ import android.widget.ImageView;
 public class SectionProgressView extends ImageView {
 
     private int mProgressRes = 0;
-private NinePatchDrawable mProgressDrawable;
+    private NinePatchDrawable mProgressDrawable;
     private float mProgressValue = 0;
 
     private int mPaddingTop = 0;
@@ -35,8 +35,8 @@ private NinePatchDrawable mProgressDrawable;
     public void setProgressRes(int res) {
 	mProgressRes = res;
 	if (res > 0) {
-	    mProgressDrawable = (NinePatchDrawable) getContext().getResources().getDrawable(
-		    mProgressRes);
+	    mProgressDrawable = (NinePatchDrawable) getContext().getResources()
+		    .getDrawable(mProgressRes);
 	}
     }
 
@@ -58,7 +58,8 @@ private NinePatchDrawable mProgressDrawable;
 	if (mProgressBounds != null) {
 	    mProgressBounds.left = mPaddingLeft;
 	    mProgressBounds.top = mPaddingTop;
-	    mProgressBounds.right = (int) ((getWidth() - mPaddingRight) * mProgressValue / 100f);
+	    mProgressBounds.right = (int) ((getWidth() - mPaddingRight)
+		    * mProgressValue / 100f);
 	    mProgressBounds.bottom = getHeight() - mPaddingBottom;
 
 	    mProgressDrawable.setBounds(mProgressBounds);

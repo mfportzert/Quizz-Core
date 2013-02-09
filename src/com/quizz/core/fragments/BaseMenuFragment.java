@@ -63,9 +63,9 @@ public class BaseMenuFragment extends Fragment {
 		if (getActivity() instanceof FragmentContainer) {
 		    mMenuLocked = true;
 		    FragmentContainer container = (FragmentContainer) getActivity();
-		    NavigationUtils
-			    .animatedNavigationTo(cls, getActivity().getSupportFragmentManager(),
-				    container, true, transaction, animatorSet);
+		    NavigationUtils.animatedNavigationTo(cls, getActivity()
+			    .getSupportFragmentManager(), container, true,
+			    transaction, animatorSet);
 		}
 	    }
 	});

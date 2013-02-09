@@ -10,16 +10,16 @@ import com.quizz.core.models.Section;
 public class BaseGridLevelsFragment extends Fragment {
 
     public static final String ARG_SECTION = "BaseGridLevelsFragment.ARG_SECTION";
-    
+
     protected ArrayAdapter<Level> mAdapter;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	Section section = getArguments().getParcelable(ARG_SECTION);
 	fillAdapter(section);
     }
-    
+
     private void fillAdapter(Section section) {
 	mAdapter.clear();
 	for (Level level : section.levels) {

@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 public abstract class BaseLevelFragment extends Fragment {
 
     public static final String ARG_LEVEL = "BaseLevelFragment.ARG_LEVEL";
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);

@@ -17,15 +17,18 @@ public class ConfirmQuitDialog extends AlertDialog {
 
 	setTitle(R.string.quit_label);
 	setMessage(getContext().getText(R.string.sure_to_quit));
-	setButton(BUTTON_POSITIVE, getContext().getText(R.string.yes), mPositiveButtonClick);
-	setButton(BUTTON_NEGATIVE, getContext().getText(R.string.not_yet), mNegativeButtonClick);
+	setButton(BUTTON_POSITIVE, getContext().getText(R.string.yes),
+		mPositiveButtonClick);
+	setButton(BUTTON_NEGATIVE, getContext().getText(R.string.not_yet),
+		mNegativeButtonClick);
     }
 
     public ConfirmQuitDialog(Context context, View customView) {
 	super(context, android.R.style.Theme_Translucent_NoTitleBar);
 
 	setView(customView);
-	Button positiveButton = (Button) customView.findViewById(R.id.dialog_positive_button);
+	Button positiveButton = (Button) customView
+		.findViewById(R.id.dialog_positive_button);
 	if (positiveButton != null) {
 	    positiveButton.setOnClickListener(new View.OnClickListener() {
 
@@ -36,7 +39,8 @@ public class ConfirmQuitDialog extends AlertDialog {
 	    });
 	}
 
-	Button negativeButton = (Button) customView.findViewById(R.id.dialog_negative_button);
+	Button negativeButton = (Button) customView
+		.findViewById(R.id.dialog_negative_button);
 	if (negativeButton != null) {
 	    negativeButton.setOnClickListener(new View.OnClickListener() {
 
