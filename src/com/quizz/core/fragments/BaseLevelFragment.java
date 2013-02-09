@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 public abstract class BaseLevelFragment extends Fragment {
 
     public static final String ARG_LEVEL = "BaseLevelFragment.ARG_LEVEL";
+    public static final String ARG_ROTATION = "BaseLevelFragment.ARG_ROTATION";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

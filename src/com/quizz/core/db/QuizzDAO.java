@@ -198,6 +198,7 @@ public enum QuizzDAO {
 		+ DbHelper.COLUMN_NUMBER + ", " + DbHelper.TABLE_LEVELS + "."
 		+ DbHelper.COLUMN_LEVEL + ", " + DbHelper.TABLE_LEVELS + "."
 		+ DbHelper.COLUMN_IMAGE + ", " + DbHelper.TABLE_LEVELS + "."
+		+ DbHelper.COLUMN_PARTIAL_RESPONSE + ", " + DbHelper.TABLE_LEVELS + "."
 		+ DbHelper.COLUMN_DESCRIPTION + ", " + DbHelper.TABLE_LEVELS
 		+ "." + DbHelper.COLUMN_DIFFICULTY + ", "
 		+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_RESPONSE + ", "
@@ -230,6 +231,8 @@ public enum QuizzDAO {
 		.getColumnIndex(DbHelper.COLUMN_IMAGE));
 	level.description = cursor.getString(cursor
 		.getColumnIndex(DbHelper.COLUMN_DESCRIPTION));
+	level.partialResponse = cursor.getString(cursor
+		.getColumnIndex(DbHelper.COLUMN_PARTIAL_RESPONSE));
 	level.difficulty = cursor.getString(cursor
 		.getColumnIndex(DbHelper.COLUMN_DIFFICULTY));
 	level.response = cursor.getString(cursor
