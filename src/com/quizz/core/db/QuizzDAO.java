@@ -145,7 +145,7 @@ public enum QuizzDAO {
 	    levelValues.put(DbHelper.COLUMN_DIFFICULTY, level.difficulty);
 	    levelValues.put(DbHelper.COLUMN_RESPONSE, level.response);
 	    levelValues.put(DbHelper.COLUMN_PARTIAL_RESPONSE,
-		    level.partial_response);
+		    level.partialResponse);
 	    levelValues.put(DbHelper.COLUMN_STATUS, Level.STATUS_LEVEL_UNCLEAR);
 	    levelValues.put(DbHelper.COLUMN_FK_SECTION, sectionInsertId);
 	    long levelInsertId = mDbHelper.getWritableDatabase().insert(

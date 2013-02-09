@@ -65,36 +65,4 @@ public class Hint implements Parcelable {
 	dest.writeInt(this.type);
 	dest.writeInt(this.isUnlocked ? 1 : 0);
     }
-
-    // public int getId() {
-    // return id;
-    // }
-    //
-    // public void setId(int id) {
-    // this.id = id;
-    // }
-    //
-    // public String getHint() {
-    // return hint;
-    // }
-    //
-    // public void setHint(String hint) {
-    // this.hint = hint;
-    // }
-    //
-    // public int getType() {
-    // return type;
-    // }
-    //
-    // public void setType(int type) {
-    // this.type = type;
-    // }
-    //
-    // public boolean isUnlocked() {
-    // return isUnlocked;
-    // }
-    //
-    // public void setUnlocked(boolean isUnlocked) {
-    // this.isUnlocked = isUnlocked;
-    // }
 }

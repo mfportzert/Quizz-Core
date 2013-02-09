@@ -23,13 +23,6 @@ public class Section implements Parcelable {
 	}
     };
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-	dest.writeInt(this.number);
-	dest.writeString(this.name);
-	dest.writeList(this.levels);
-    }
-
     @SerializedName("section")
     public int number;
 
@@ -48,6 +41,13 @@ public class Section implements Parcelable {
 	parcel.readList(this.levels, Section.class.getClassLoader());
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+	dest.writeInt(this.number);
+	dest.writeString(this.name);
+	dest.writeList(this.levels);
+    }
+    
     public Section() {
 	// TODO Auto-generated constructor stub
     }

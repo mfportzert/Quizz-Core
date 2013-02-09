@@ -30,13 +30,14 @@ public class Level implements Parcelable {
 	}
     };
 
+    @SerializedName("id")
     public int id;
 
     @SerializedName("response")
     public String response;
 
     @SerializedName("partial_response")
-    public String partial_response;
+    public String partialResponse;
 
     @SerializedName("description")
     public String description;
@@ -61,8 +62,11 @@ public class Level implements Parcelable {
      * @param parcel
      */
     public Level(Parcel parcel) {
+	this.id = parcel.readInt();
 	this.response = parcel.readString();
+	this.partialResponse = parcel.readString();
 	this.description = parcel.readString();
+	this.moreInfosLink = parcel.readString();
 	this.imageName = parcel.readString();
 	this.difficulty = parcel.readString();
 	parcel.readList(this.hints, Level.class.getClassLoader());
@@ -75,8 +79,11 @@ public class Level implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+	dest.writeInt(this.id);
 	dest.writeString(this.response);
+	dest.writeString(this.partialResponse);
 	dest.writeString(this.description);
+	dest.writeString(this.moreInfosLink);
 	dest.writeString(this.imageName);
 	dest.writeString(this.difficulty);
 	dest.writeList(this.hints);
