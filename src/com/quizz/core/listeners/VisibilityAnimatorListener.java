@@ -7,26 +7,26 @@ import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.Animato
 
 public class VisibilityAnimatorListener implements AnimatorListener {
 
-    View mView;
+	View mView;
 
-    public VisibilityAnimatorListener(View view) {
-	mView = view;
-    }
+	public VisibilityAnimatorListener(View view) {
+		mView = view;
+	}
 
-    @Override
-    public void onAnimationStart(Animator animation) {
-	mView.setVisibility(View.VISIBLE);
-    }
+	@Override
+	public void onAnimationStart(Animator animation) {
+		mView.setVisibility(View.VISIBLE);
+	}
 
-    @Override
-    public void onAnimationEnd(Animator animation) {
-    }
+	@Override
+	public void onAnimationEnd(Animator animation) {
+	}
 
-    @Override
-    public void onAnimationCancel(Animator animation) {
-    }
+	@Override
+	public void onAnimationCancel(Animator animation) {
+	}
 
-    @Override
-    public void onAnimationRepeat(Animator animation) {
-    }
+	@Override
+	public void onAnimationRepeat(Animator animation) {
+	}
 }

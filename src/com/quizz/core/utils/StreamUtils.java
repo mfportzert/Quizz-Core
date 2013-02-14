@@ -13,28 +13,28 @@ import java.util.Scanner;
  */
 public class StreamUtils {
 
-    public static void copyStream(InputStream is, OutputStream os) {
-	final int buffer_size = 1024;
+	public static void copyStream(InputStream is, OutputStream os) {
+		final int buffer_size = 1024;
 
-	try {
-	    byte[] bytes = new byte[buffer_size];
-	    for (;;) {
+		try {
+			byte[] bytes = new byte[buffer_size];
+			for (;;) {
 
-		int count = is.read(bytes, 0, buffer_size);
-		if (count == -1)
-		    break;
-		os.write(bytes, 0, count);
-	    }
+				int count = is.read(bytes, 0, buffer_size);
+				if (count == -1)
+					break;
+				os.write(bytes, 0, count);
+			}
 
-	} catch (Exception ex) {
+		} catch (Exception ex) {
+		}
 	}
-    }
 
-    public static String toString(InputStream is) {
-	try {
-	    return new Scanner(is).useDelimiter("\\A").next();
-	} catch (java.util.NoSuchElementException e) {
-	    return "";
+	public static String toString(InputStream is) {
+		try {
+			return new Scanner(is).useDelimiter("\\A").next();
+		} catch (java.util.NoSuchElementException e) {
+			return "";
+		}
 	}
-    }
 }
