@@ -193,21 +193,22 @@ public enum QuizzDAO {
 
 	public Cursor getSections() {
 
-		String sqlQuery = "SELECT " + DbHelper.TABLE_SECTIONS + "."
-				+ DbHelper.COLUMN_ID + ", " + DbHelper.TABLE_SECTIONS + "."
-				+ DbHelper.COLUMN_NUMBER + ", " + DbHelper.TABLE_LEVELS + "."
-				+ DbHelper.COLUMN_LEVEL + ", " + DbHelper.TABLE_LEVELS + "."
-				+ DbHelper.COLUMN_IMAGE + ", " + DbHelper.TABLE_LEVELS + "."
-				+ DbHelper.COLUMN_PARTIAL_RESPONSE + ", "
-				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_INDICATION
-				+ ", " + DbHelper.TABLE_LEVELS + "."
-				+ DbHelper.COLUMN_DIFFICULTY + ", " + DbHelper.TABLE_LEVELS
-				+ "." + DbHelper.COLUMN_RESPONSE + ", " + DbHelper.TABLE_LEVELS
-				+ "." + DbHelper.COLUMN_LINK + DbHelper.TABLE_LEVELS + "."
-				+ DbHelper.COLUMN_STATUS + " FROM " + DbHelper.TABLE_SECTIONS
-				+ " LEFT JOIN " + DbHelper.TABLE_LEVELS + " ON "
-				+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + " = "
-				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;// +
+		String sqlQuery = "SELECT " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + ", "
+					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_IMAGE + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_PARTIAL_RESPONSE + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_INDICATION + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_DIFFICULTY + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_RESPONSE + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LINK + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_STATUS
+				+ " FROM " + DbHelper.TABLE_SECTIONS
+				+ " LEFT JOIN " + DbHelper.TABLE_LEVELS
+					+ " ON "
+						+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID
+					+ " = "
+						+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;// +
 		// " GROUP BY " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID;
 
 		Cursor cursor = mDbHelper.getReadableDatabase()
@@ -240,9 +241,9 @@ public enum QuizzDAO {
 				.getColumnIndex(DbHelper.COLUMN_RESPONSE));
 		level.moreInfosLink = cursor.getString(cursor
 				.getColumnIndex(DbHelper.COLUMN_LINK));
-		level.hints = new ArrayList<Hint>();
 		level.status = cursor.getInt(cursor
 				.getColumnIndex(DbHelper.COLUMN_STATUS));
+		level.hints = new ArrayList<Hint>();
 		return level;
 	}
 

@@ -17,6 +17,9 @@ public class Level implements Parcelable {
 	public static String LEVEL_MEDIUM = "medium";
 	public static String LEVEL_HARD = "hard";
 
+	public static int HINT_USED = 1;
+	public static int HINT_UNUSED = 0;
+
 	public static final Parcelable.Creator<Level> CREATOR = new Parcelable.Creator<Level>() {
 
 		public Level createFromParcel(Parcel parcel) {
@@ -92,7 +95,7 @@ public class Level implements Parcelable {
 	}
 
 	public ArrayList<Hint> getHintsFromDb() {
-		if (hints == null || hints.size() == 0)
+		if (this.hints != null || this.hints.size() == 0)
 			this.hints = (ArrayList<Hint>) QuizzDAO.getHints(this);
 		return this.hints;
 	}
