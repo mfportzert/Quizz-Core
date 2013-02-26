@@ -203,7 +203,7 @@ public enum QuizzDAO {
 				+ ", " + DbHelper.TABLE_LEVELS + "."
 				+ DbHelper.COLUMN_DIFFICULTY + ", " + DbHelper.TABLE_LEVELS
 				+ "." + DbHelper.COLUMN_RESPONSE + ", " + DbHelper.TABLE_LEVELS
-				+ "." + DbHelper.COLUMN_LINK + DbHelper.TABLE_LEVELS + "."
+				+ "." + DbHelper.COLUMN_LINK + ", " + DbHelper.TABLE_LEVELS + "."
 				+ DbHelper.COLUMN_STATUS + " FROM " + DbHelper.TABLE_SECTIONS
 				+ " LEFT JOIN " + DbHelper.TABLE_LEVELS + " ON "
 				+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + " = "
