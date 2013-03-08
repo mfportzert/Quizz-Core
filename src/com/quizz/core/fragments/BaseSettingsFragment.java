@@ -1,5 +1,7 @@
 package com.quizz.core.fragments;
 
+import com.quizz.core.activities.BaseQuizzActivity;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -12,6 +14,10 @@ public class BaseSettingsFragment extends Fragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		if (getActivity() instanceof BaseQuizzActivity) {
+			((BaseQuizzActivity) getActivity())
+					.setHideAbOnRotationChange(false);
+		}
 		super.onActivityCreated(savedInstanceState);
 	}
 
