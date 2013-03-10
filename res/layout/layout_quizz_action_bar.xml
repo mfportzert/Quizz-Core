@@ -25,8 +25,7 @@
         android:id="@+id/ab_custom_view_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/ab_back_but_separator">
+        android:layout_alignParentRight="true">
         
     </RelativeLayout>
 

@@ -55,7 +55,7 @@ public class SectionProgressView extends ImageView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		if (mProgressBounds != null) {
+		if (mProgressBounds != null && mProgressDrawable != null) {
 			mProgressBounds.left = mPaddingLeft;
 			mProgressBounds.top = mPaddingTop;
 			mProgressBounds.right = (int) ((getWidth() - mPaddingRight)
