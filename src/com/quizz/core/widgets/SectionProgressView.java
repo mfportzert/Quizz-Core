@@ -3,6 +3,7 @@ package com.quizz.core.widgets;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -40,6 +41,14 @@ public class SectionProgressView extends ImageView {
 		}
 	}
 
+	public void setProgressDrawable(Drawable drawable) {
+		if (drawable instanceof NinePatchDrawable) {
+			mProgressDrawable = (NinePatchDrawable) drawable;
+		} else {
+			throw new IllegalArgumentException("Progress Drawable must be a Nine Patch.");
+		}
+	}
+	
 	public void setProgressValue(float value) {
 		mProgressValue = value;
 	}
