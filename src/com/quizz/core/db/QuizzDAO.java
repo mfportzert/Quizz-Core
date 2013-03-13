@@ -134,6 +134,7 @@ public enum QuizzDAO {
 
 		ContentValues sectionValues = new ContentValues();
 		sectionValues.put(DbHelper.COLUMN_NUMBER, section.number);
+		sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
 		long sectionInsertId = mDbHelper.getWritableDatabase().insert(
 				DbHelper.TABLE_SECTIONS, null, sectionValues);
 
@@ -195,6 +196,7 @@ public enum QuizzDAO {
 
 		String sqlQuery = "SELECT " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + ", "
 					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", "
+					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_UNLOCKED + " AS section_lock_status, "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_IMAGE + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_PARTIAL_RESPONSE + ", "
@@ -249,9 +251,9 @@ public enum QuizzDAO {
 
 	public Section cursorToSection(Cursor cursor) {
 		Section section = new Section();
-		section.number = cursor.getInt(cursor
-				.getColumnIndex(DbHelper.COLUMN_NUMBER));
+		section.number = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_NUMBER));
 		section.levels = new ArrayList<Level>();
+		section.status = cursor.getInt(cursor.getColumnIndex("section_lock_status"));
 		return section;
 	}
 }

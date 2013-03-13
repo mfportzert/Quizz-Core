@@ -29,15 +29,19 @@ public class Section implements Parcelable {
 	@SerializedName("name")
 	public String name;
 
+	public int status = SECTION_LOCKED;
+	
 	@SerializedName("levels")
 	public ArrayList<Level> levels = new ArrayList<Level>();
 
+	
 	/**
 	 * @param parcel
 	 */
 	public Section(Parcel parcel) {
 		this.number = parcel.readInt();
 		this.name = parcel.readString();
+		this.status = parcel.readInt();
 		parcel.readList(this.levels, Section.class.getClassLoader());
 	}
 
@@ -45,6 +49,7 @@ public class Section implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(this.number);
 		dest.writeString(this.name);
+		dest.writeInt(this.status);
 		dest.writeList(this.levels);
 	}
 
