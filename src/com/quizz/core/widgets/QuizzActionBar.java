@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,6 +73,11 @@ public class QuizzActionBar extends RelativeLayout {
 			@Override
 			public void onClick(View v) {
 				if (getContext() instanceof Activity) {
+					InputMethodManager imm = (InputMethodManager) ((Activity) getContext())
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+					if (imm.isAcceptingText()) {
+						  imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+					}
 					((Activity) getContext()).onBackPressed();
 				}
 			}

@@ -27,6 +27,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.quizz.core.R;
+import com.quizz.core.application.BaseQuizzApplication;
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
@@ -37,10 +38,6 @@ import com.quizz.core.widgets.QuizzActionBar;
 public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 		implements FragmentContainer, Closeable {
 	private static final String TAG = BaseQuizzActivity.class.getSimpleName();
-
-	private static final String HIDE_AB_ON_ROTATION_CHANGE = "BaseQuizzActivity.HIDE_AB_ON_ROTATION_CHANGE";
-	private static final String PREF_VERSION_KEY = "VERSION";
-	private static final int PREF_VERSION_VALUE = 1;
 
 	private View mQuizzLayout;
 	private View mConfirmQuitDialogView;
@@ -71,9 +68,14 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 		buildGameLayout(savedInstanceState);
 
 		SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-		if (!sharedPreferences.contains(PREF_VERSION_KEY)) {
+		if (!sharedPreferences.contains(BaseQuizzApplication.PREF_VERSION_KEY)) {
+			Editor editor = sharedPreferences.edit();
+			editor.putInt(BaseQuizzApplication.PREF_UNLOCKED_HINTS_COUNT_KEY, 
+					BaseQuizzApplication.PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE);
+			editor.commit();
 			new FirstLaunchTask().execute();
-		} else if (sharedPreferences.getInt(PREF_VERSION_KEY, 0) < PREF_VERSION_VALUE) {
+		} else if (sharedPreferences.getInt(BaseQuizzApplication.PREF_VERSION_KEY, 0) 
+				< BaseQuizzApplication.PREF_VERSION_VALUE) {
 			// need to upgrade db
 		} else {
 			viewSwitcher.showNext();
@@ -97,7 +99,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 		if (savedInstanceState != null) {
 			mHideAbOnRotation = savedInstanceState
-					.getBoolean(HIDE_AB_ON_ROTATION_CHANGE);
+					.getBoolean(BaseQuizzApplication.HIDE_AB_ON_ROTATION_CHANGE);
 			if (mHideAbOnRotation) {
 				mQuizzActionBar.hide(QuizzActionBar.MOVE_DIRECT);
 			}
@@ -155,7 +157,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putBoolean(HIDE_AB_ON_ROTATION_CHANGE, mHideAbOnRotation);
+		outState.putBoolean(BaseQuizzApplication.HIDE_AB_ON_ROTATION_CHANGE, mHideAbOnRotation);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -218,7 +220,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 		protected Void doInBackground(Void... arg0) {
 			SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
 			Editor editor = sharedPreferences.edit();
-			editor.putInt(PREF_VERSION_KEY, PREF_VERSION_VALUE);
+			editor.putInt(BaseQuizzApplication.PREF_VERSION_KEY, BaseQuizzApplication.PREF_VERSION_VALUE);
 			editor.commit();
 
 			Gson gson = new Gson();
