@@ -233,7 +233,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 					int progress = 0;
 					int ratio = 100 / sections.size();
 					for (Section section : sections) {
-						section.status = section.number == 1 ? Section.SECTION_UNLOCKED : Section.SECTION_LOCKED;
+						section.status = section.id == 1 ? Section.SECTION_UNLOCKED : Section.SECTION_LOCKED;
 						QuizzDAO.INSTANCE.insertSection(section);
 						publishProgress(++progress * ratio);
 					}

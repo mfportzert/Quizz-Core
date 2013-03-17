@@ -53,7 +53,7 @@ public class Level implements Parcelable {
 	public String difficulty;
 
 	@SerializedName("hints")
-	public ArrayList<Hint> hints = new ArrayList<Hint>();
+	public ArrayList<Hint> hints;
 
 	public int status;
 
@@ -95,8 +95,9 @@ public class Level implements Parcelable {
 	}
 
 	public ArrayList<Hint> getHintsFromDb() {
-		if (this.hints != null || this.hints.size() == 0)
-			this.hints = (ArrayList<Hint>) QuizzDAO.getHints(this);
+		if (this.hints == null) {
+			this.hints = (ArrayList<Hint>) QuizzDAO.INSTANCE.getHints(this);
+		}
 		return this.hints;
 	}
 
