@@ -2,10 +2,12 @@ package com.quizz.core.models;
 
 import java.util.ArrayList;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.quizz.core.db.QuizzDAO;
 
 public class Section implements Parcelable {
 
@@ -62,4 +64,8 @@ public class Section implements Parcelable {
 		return 0;
 	}
 
+	
+	public void update() {
+		QuizzDAO.INSTANCE.updateSection(this);
+	}
 }

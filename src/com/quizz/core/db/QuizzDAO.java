@@ -62,12 +62,13 @@ public enum QuizzDAO {
 	}
 
 	public Cursor getHintsCursor(Level level) {
-		String sqlQuery = "SELECT " + DbHelper.TABLE_HINTS + "."
-				+ DbHelper.COLUMN_HINT + ", " + DbHelper.TABLE_HINTS + "."
-				+ DbHelper.COLUMN_HINT_TYPE + ", " + DbHelper.TABLE_HINTS + "."
-				+ DbHelper.COLUMN_UNLOCKED + " FROM " + DbHelper.TABLE_HINTS
-				+ " WHERE " + DbHelper.COLUMN_FK_LEVEL + " = "
-				+ String.valueOf(level.id);
+		String sqlQuery = "SELECT "
+				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_ID + ", "
+				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_HINT + ", "
+				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_HINT_TYPE + ", "
+				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_UNLOCKED
+				+ " FROM " + DbHelper.TABLE_HINTS
+				+ " WHERE " + DbHelper.COLUMN_FK_LEVEL + " = " + String.valueOf(level.id);
 
 		Cursor cursor = mDbHelper.getWritableDatabase().rawQuery(sqlQuery, null);
 		return cursor;
@@ -111,6 +112,8 @@ public enum QuizzDAO {
 
 	private static Hint cursorToHint(Cursor cursor) {
 		Hint hint = new Hint();
+		hint.id = cursor.getInt(cursor
+				.getColumnIndex(DbHelper.COLUMN_ID));
 		hint.hint = cursor.getString(cursor
 				.getColumnIndex(DbHelper.COLUMN_HINT));
 		hint.type = cursor.getInt(cursor
@@ -177,5 +180,30 @@ public enum QuizzDAO {
 		}
 		cursor.close();
 		return sections;
+	}
+
+	public void updateSection(Section section) {
+		ContentValues sectionValues = new ContentValues();
+		sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
+		mDbHelper.getWritableDatabase().update(
+				DbHelper.TABLE_SECTIONS, sectionValues, 
+				DbHelper.COLUMN_NUMBER+"="+String.valueOf(section.id), null);
+	}
+	
+	public void updateLevel(Level level) {
+		ContentValues cv = new ContentValues();
+		cv.put(DbHelper.COLUMN_STATUS, level.status);
+		mDbHelper.getWritableDatabase().update(
+				DbHelper.TABLE_LEVELS, cv, 
+				DbHelper.COLUMN_ID+"="+String.valueOf(level.id), null);
+	}
+	
+	public void updateHint(Hint hint) {
+		ContentValues cv = new ContentValues();
+		cv.put(DbHelper.COLUMN_UNLOCKED, 
+				hint.isUnlocked ? Hint.STATUS_HINT_REVEALED : Hint.STATUS_HINT_UNREVEALED);
+		mDbHelper.getWritableDatabase().update(
+				DbHelper.TABLE_HINTS, cv, 
+				DbHelper.COLUMN_ID+"="+String.valueOf(hint.id), null);
 	}
 }

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.quizz.core.db.QuizzDAO;
 
 public class Hint implements Parcelable {
 
@@ -14,7 +15,7 @@ public class Hint implements Parcelable {
 	public static int HINT_TYPE_MAP = 1;
 	public static int HINT_TYPE_LETTER = 2;
 
-	private int id;
+	public int id;
 
 	@SerializedName("hint")
 	public String hint;
@@ -39,9 +40,10 @@ public class Hint implements Parcelable {
 	 * @param parcel
 	 */
 	public Hint(Parcel parcel) {
+		this.id = parcel.readInt();
 		this.hint = parcel.readString();
 		this.type = parcel.readInt();
-		this.isUnlocked = parcel.readInt() != 0;
+		this.isUnlocked = parcel.readInt() != STATUS_HINT_UNREVEALED;
 
 	}
 
@@ -61,8 +63,13 @@ public class Hint implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.id);
 		dest.writeString(this.hint);
 		dest.writeInt(this.type);
-		dest.writeInt(this.isUnlocked ? 1 : 0);
+		dest.writeInt(this.isUnlocked ? STATUS_HINT_REVEALED : STATUS_HINT_UNREVEALED);
+	}
+	
+	public void update() {
+		QuizzDAO.INSTANCE.updateHint(this);
 	}
 }

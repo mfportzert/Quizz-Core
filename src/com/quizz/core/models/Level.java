@@ -100,5 +100,9 @@ public class Level implements Parcelable {
 		}
 		return this.hints;
 	}
+	
+	public void update() {
+		QuizzDAO.INSTANCE.updateLevel(this);
+	}
 
 }
