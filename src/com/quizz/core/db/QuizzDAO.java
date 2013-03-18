@@ -27,7 +27,7 @@ public enum QuizzDAO {
 	public void insertSection(Section section) {
 
 		ContentValues sectionValues = new ContentValues();
-		sectionValues.put(DbHelper.COLUMN_NUMBER, section.id);
+		sectionValues.put(DbHelper.COLUMN_NUMBER, section.number);
 		sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
 		long sectionInsertId = mDbHelper.getWritableDatabase().insert(
 				DbHelper.TABLE_SECTIONS, null, sectionValues);
@@ -88,9 +88,11 @@ public enum QuizzDAO {
 	}
 
 	public List<Section> getSections() {
-		String sqlQuery = "SELECT " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + ", "
+		String sqlQuery = "SELECT "
+					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + " AS section_id, "
 					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", "
 					+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_UNLOCKED + " AS section_lock_status, "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_ID + " AS level_id, "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_IMAGE + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_PARTIAL_RESPONSE + ", "
@@ -125,27 +127,22 @@ public enum QuizzDAO {
 
 	private Level cursorToLevel(Cursor cursor) {
 		Level level = new Level();
-		level.imageName = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_IMAGE));
-		level.indication = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_INDICATION));
-		level.partialResponse = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_PARTIAL_RESPONSE));
-		level.difficulty = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_DIFFICULTY));
-		level.response = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_RESPONSE));
-		level.moreInfosLink = cursor.getString(cursor
-				.getColumnIndex(DbHelper.COLUMN_LINK));
-		level.status = cursor.getInt(cursor
-				.getColumnIndex(DbHelper.COLUMN_STATUS));
+		level.id = cursor.getInt(cursor.getColumnIndex("level_id"));
+		level.imageName = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_IMAGE));
+		level.indication = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_INDICATION));
+		level.partialResponse = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_PARTIAL_RESPONSE));
+		level.difficulty = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_DIFFICULTY));
+		level.response = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_RESPONSE));
+		level.moreInfosLink = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_LINK));
+		level.status = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_STATUS));
 		level.hints = new ArrayList<Hint>();
 		return level;
 	}
 
 	private Section cursorToSection(Cursor cursor) {
 		Section section = new Section();
-		section.id = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_NUMBER));
+		section.id = cursor.getInt(cursor.getColumnIndex("section_id"));
+		section.number = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_NUMBER));
 		section.status = cursor.getInt(cursor.getColumnIndex("section_lock_status"));
 		return section;
 	}
@@ -158,7 +155,7 @@ public enum QuizzDAO {
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			int column = cursor.getColumnIndex(DbHelper.COLUMN_ID);
+			int column = cursor.getColumnIndex("section_id");
 			if (cursor.getInt(column) != lastId && lastId != 0) {
 				if (section != null) {
 					section.levels.addAll(levels);
@@ -169,7 +166,7 @@ public enum QuizzDAO {
 			section = QuizzDAO.INSTANCE.cursorToSection(cursor);
 			levels.add(QuizzDAO.INSTANCE.cursorToLevel(cursor));
 			lastId = cursor.getInt(cursor
-					.getColumnIndex(DbHelper.COLUMN_ID));
+					.getColumnIndex("section_id"));
 			if (cursor.isLast()) {
 				for (Level level : levels) {
 					section.levels.add(level);
@@ -187,7 +184,7 @@ public enum QuizzDAO {
 		sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
 		mDbHelper.getWritableDatabase().update(
 				DbHelper.TABLE_SECTIONS, sectionValues, 
-				DbHelper.COLUMN_NUMBER+"="+String.valueOf(section.id), null);
+				DbHelper.COLUMN_ID+"="+String.valueOf(section.id), null);
 	}
 	
 	public void updateLevel(Level level) {
