@@ -2,7 +2,6 @@ package com.quizz.core.models;
 
 import java.util.ArrayList;
 
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -38,7 +37,10 @@ public class Section implements Parcelable {
 	@SerializedName("levels")
 	public ArrayList<Level> levels = new ArrayList<Level>();
 
-	
+	public Section() {
+		
+	}
+
 	/**
 	 * @param parcel
 	 */
@@ -57,10 +59,6 @@ public class Section implements Parcelable {
 		dest.writeString(this.name);
 		dest.writeInt(this.status);
 		dest.writeList(this.levels);
-	}
-
-	public Section() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
