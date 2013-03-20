@@ -55,10 +55,9 @@ public class Level implements Parcelable {
 	@SerializedName("hints")
 	private ArrayList<Hint> hints;
 
-	public int status;
-
-	public int sectionId;
-	public float rotation;
+	public int status = STATUS_LEVEL_UNCLEAR;
+	public int sectionId = 0;
+	public float rotation = 0;
 	
 	public Level() {
 

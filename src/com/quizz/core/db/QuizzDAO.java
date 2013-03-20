@@ -164,7 +164,9 @@ public enum QuizzDAO {
 				levels.clear();
 			}
 			section = QuizzDAO.INSTANCE.cursorToSection(cursor);
-			levels.add(QuizzDAO.INSTANCE.cursorToLevel(cursor));
+			Level tmpLevel = QuizzDAO.INSTANCE.cursorToLevel(cursor);
+			tmpLevel.sectionId = section.id;
+			levels.add(tmpLevel);
 			lastId = cursor.getInt(cursor
 					.getColumnIndex("section_id"));
 			if (cursor.isLast()) {
