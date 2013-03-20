@@ -15,6 +15,10 @@ public class DataManager {
 
 	private static List<Section> mCacheSections = null;
 
+	public static synchronized void setSections(List<Section> sections) {
+		mCacheSections = sections;
+	}
+	
 	public static synchronized List<Section> getSections() {
 		if (mCacheSections == null) {
 			mCacheSections = QuizzDAO.INSTANCE.getSections();

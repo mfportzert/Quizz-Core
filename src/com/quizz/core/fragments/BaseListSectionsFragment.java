@@ -18,8 +18,8 @@ import com.quizz.core.managers.DataManager;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
-public class BaseListSectionsFragment extends Fragment implements
-		SectionsLoaderListener {
+public class BaseListSectionsFragment extends Fragment /*implements
+		SectionsLoaderListener*/ {
 
 	protected View mLoadingView;
 	protected ArrayAdapter<Section> mAdapter;
@@ -31,58 +31,62 @@ public class BaseListSectionsFragment extends Fragment implements
 					.setHideAbOnRotationChange(false);
 		}
 		super.onActivityCreated(savedInstanceState);
-		new LoadSectionsTask().execute();
+//		new LoadSectionsTask().execute();
+		List<Section> sections = DataManager.getSections();
+		for (Section section : sections)
+			mAdapter.add(section);
+		mAdapter.notifyDataSetChanged();
 	}
 
-	@Override
-	public void onSectionsLoading() {
-		if (mLoadingView != null) {
-			mLoadingView.setVisibility(View.VISIBLE);
-		}
-	}
+//	@Override
+//	public void onSectionsLoading() {
+//		if (mLoadingView != null) {
+//			mLoadingView.setVisibility(View.VISIBLE);
+//		}
+//	}
 
-	@Override
-	public void onSectionsLoaded(List<Section> listSections) {
-		if (mAdapter != null) {
-			mAdapter.clear();
-			for (Section section : listSections) {
-				section.name = "Level " + section.id;
-				mAdapter.add(section);
-			}
-			mAdapter.notifyDataSetChanged();
+//	@Override
+//	public void onSectionsLoaded(List<Section> listSections) {
+//		if (mAdapter != null) {
+//			mAdapter.clear();
+//			for (Section section : listSections) {
+//				section.name = "Level " + section.id;
+//				mAdapter.add(section);
+//			}
+//			mAdapter.notifyDataSetChanged();
+//
+//			if (mLoadingView != null) {
+//				mLoadingView.setVisibility(View.GONE);
+//			}
+//		}
+//	}
 
-			if (mLoadingView != null) {
-				mLoadingView.setVisibility(View.GONE);
-			}
-		}
-	}
-
-	// ===========================================================
-	// Inner classes
-	// ===========================================================
-
-	/**
-	 * Load sections from database
-	 * 
-	 */
-	public class LoadSectionsTask extends
-			AsyncTask<Void, Integer, List<Section>> {
-
-		@Override
-		protected void onPreExecute() {
-			onSectionsLoading();
-			super.onPreExecute();
-		}
-
-		@Override
-		protected List<Section> doInBackground(Void... arg0) {
-			return DataManager.getSections();
-		}
-
-		@Override
-		protected void onPostExecute(List<Section> result) {
-			onSectionsLoaded(result);
-			super.onPostExecute(result);
-		}
-	}
+//	// ===========================================================
+//	// Inner classes
+//	// ===========================================================
+//
+//	/**
+//	 * Load sections from database
+//	 * 
+//	 */
+//	public class LoadSectionsTask extends
+//			AsyncTask<Void, Integer, List<Section>> {
+//
+//		@Override
+//		protected void onPreExecute() {
+//			onSectionsLoading();
+//			super.onPreExecute();
+//		}
+//
+//		@Override
+//		protected List<Section> doInBackground(Void... arg0) {
+//			return DataManager.getSections();
+//		}
+//
+//		@Override
+//		protected void onPostExecute(List<Section> result) {
+//			onSectionsLoaded(result);
+//			super.onPostExecute(result);
+//		}
+//	}
 }
