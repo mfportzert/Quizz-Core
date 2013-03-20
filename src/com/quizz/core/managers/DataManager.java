@@ -37,11 +37,26 @@ public class DataManager {
 		return null;
 	}
 	
-	public static boolean isLastLevel(Section section, Level level) {
+	public static boolean isLastLevel(Level level) {
 		return (getNextLevel(level) == null) ? true : false;
 	}
 	
-	public static Level getNextLevel(Level level) {
+	public static Level getNextLevel(Level currentLevel) {
+		Section section = getSection(currentLevel.sectionId);
+		if (section != null && section.levels != null) {
+			for (Level level : section.levels) {
+				// Compare reference, mCacheSections must be the only data access source
+				if (level == currentLevel) {
+					// If not the last level of the section, get next
+					int levelIndex = section.levels.indexOf(level);
+					if (levelIndex < (section.levels.size() - 1)) {
+						return section.levels.get(levelIndex + 1);
+					} else {
+						return null;
+					}
+				}
+			}
+		}
 		return null;
 	}
 }
