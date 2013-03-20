@@ -100,6 +100,7 @@ public enum QuizzDAO {
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_DIFFICULTY + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_RESPONSE + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LINK + ", "
+					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION + ", "
 					+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_STATUS
 				+ " FROM " + DbHelper.TABLE_SECTIONS
 				+ " LEFT JOIN " + DbHelper.TABLE_LEVELS
@@ -135,6 +136,7 @@ public enum QuizzDAO {
 		level.response = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_RESPONSE));
 		level.moreInfosLink = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_LINK));
 		level.status = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_STATUS));
+		level.sectionOwner = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_FK_SECTION));
 		level.hints = new ArrayList<Hint>();
 		return level;
 	}

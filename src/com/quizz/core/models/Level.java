@@ -57,6 +57,8 @@ public class Level implements Parcelable {
 
 	public int status;
 
+	public int sectionOwner;
+
 	public Level() {
 
 	}
@@ -74,6 +76,7 @@ public class Level implements Parcelable {
 		this.difficulty = parcel.readString();
 		parcel.readList(this.hints, Level.class.getClassLoader());
 		this.status = parcel.readInt();
+		this.sectionOwner = parcel.readInt();
 	}
 
 	@Override
@@ -92,6 +95,7 @@ public class Level implements Parcelable {
 		dest.writeString(this.difficulty);
 		dest.writeList(this.hints);
 		dest.writeInt(this.status);
+		dest.writeInt(this.sectionOwner);
 	}
 
 	public ArrayList<Hint> getHintsFromDb() {
