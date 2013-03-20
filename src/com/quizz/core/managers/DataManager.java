@@ -15,6 +15,7 @@ import com.quizz.core.models.Section;
 public class DataManager {
 
 	private static List<Section> mCacheSections = null;
+	public static boolean dataLoaded = false;
 
 	public static synchronized void setSections(List<Section> sections) {
 		mCacheSections = sections;
