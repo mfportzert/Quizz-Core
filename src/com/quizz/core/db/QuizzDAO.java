@@ -46,8 +46,8 @@ public enum QuizzDAO {
 			long levelInsertId = mDbHelper.getWritableDatabase().insert(
 					DbHelper.TABLE_LEVELS, null, levelValues);
 			Log.d("Quizz-Core - BaseQuizzDAO", "INFO [" + level.imageName
-					+ " : " + String.valueOf(level.hints.size()) + "]");
-			for (Hint hint : level.hints) {
+					+ " : " + String.valueOf(level.getHints().size()) + "]");
+			for (Hint hint : level.getHints()) {
 				ContentValues hintValues = new ContentValues();
 				hintValues.put(DbHelper.COLUMN_HINT, hint.hint);
 				hintValues.put(DbHelper.COLUMN_HINT_TYPE, hint.type);
@@ -136,8 +136,6 @@ public enum QuizzDAO {
 		level.response = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_RESPONSE));
 		level.moreInfosLink = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_LINK));
 		level.status = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_STATUS));
-		level.sectionOwner = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_FK_SECTION));
-		level.hints = new ArrayList<Hint>();
 		return level;
 	}
 

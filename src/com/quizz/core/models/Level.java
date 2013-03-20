@@ -51,14 +51,15 @@ public class Level implements Parcelable {
 
 	@SerializedName("difficulty")
 	public String difficulty;
-
+	
 	@SerializedName("hints")
-	public ArrayList<Hint> hints;
+	private ArrayList<Hint> hints;
 
 	public int status;
 
-	public int sectionOwner;
-
+	public int sectionId;
+	public float rotation;
+	
 	public Level() {
 
 	}
@@ -76,7 +77,8 @@ public class Level implements Parcelable {
 		this.difficulty = parcel.readString();
 		parcel.readList(this.hints, Level.class.getClassLoader());
 		this.status = parcel.readInt();
-		this.sectionOwner = parcel.readInt();
+		this.sectionId = parcel.readInt();
+		this.rotation = parcel.readFloat();
 	}
 
 	@Override
@@ -95,10 +97,11 @@ public class Level implements Parcelable {
 		dest.writeString(this.difficulty);
 		dest.writeList(this.hints);
 		dest.writeInt(this.status);
-		dest.writeInt(this.sectionOwner);
+		dest.writeInt(this.sectionId);
+		dest.writeFloat(this.rotation);
 	}
 
-	public ArrayList<Hint> getHintsFromDb() {
+	public ArrayList<Hint> getHints() {
 		if (this.hints == null) {
 			this.hints = (ArrayList<Hint>) QuizzDAO.INSTANCE.getHints(this);
 		}
@@ -108,5 +111,4 @@ public class Level implements Parcelable {
 	public void update() {
 		QuizzDAO.INSTANCE.updateLevel(this);
 	}
-
 }

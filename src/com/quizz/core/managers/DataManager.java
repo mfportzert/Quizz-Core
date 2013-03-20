@@ -3,6 +3,7 @@ package com.quizz.core.managers;
 import java.util.List;
 
 import com.quizz.core.db.QuizzDAO;
+import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
 
 /**
@@ -18,21 +19,29 @@ public class DataManager {
 	public static synchronized void setSections(List<Section> sections) {
 		mCacheSections = sections;
 	}
-	
-	public static synchronized List<Section> getSections() {
+
+	public static List<Section> getSections() {
 		if (mCacheSections == null) {
 			mCacheSections = QuizzDAO.INSTANCE.getSections();
 		}
 		return mCacheSections;
 	}
 
-	public static synchronized Section getSection(int id) {
+	public static Section getSection(int id) {
 		List<Section> sections = getSections();
 		for (Section section : sections) {
 			if (section.id == id) {
 				return section;
 			}
 		}
+		return null;
+	}
+	
+	public static boolean isLastLevel(Section section, Level level) {
+		return (getNextLevel(level) == null) ? true : false;
+	}
+	
+	public static Level getNextLevel(Level level) {
 		return null;
 	}
 }
