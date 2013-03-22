@@ -1,16 +1,14 @@
 package com.quizz.core.activities;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quizz.core.R;
@@ -33,9 +31,6 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 	private boolean mHideAbOnRotation = false;
 
-//	private TextView mTvProgress;
-//	private ProgressBar mPbProgressBar;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -43,28 +38,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 		setContentView(R.layout.activity_quizz);
 		buildGameLayout(savedInstanceState);
-
-//		SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-//		if (!sharedPreferences.contains(BaseQuizzApplication.PREF_VERSION_KEY)) {
-//			Editor editor = sharedPreferences.edit();
-//			editor.putInt(BaseQuizzApplication.PREF_UNLOCKED_HINTS_COUNT_KEY, 
-//					BaseQuizzApplication.PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE);
-//			editor.commit();
-////			new FirstLaunchTask().execute();
-//		} else if (sharedPreferences.getInt(BaseQuizzApplication.PREF_VERSION_KEY, 0) 
-//				< BaseQuizzApplication.PREF_VERSION_VALUE) {
-//			// need to upgrade db
-//		} else {
-////			viewSwitcher.showNext();
-//		}
 	}
-
-//	private void buildLoadingLayout() {
-//		mTvProgress = (TextView) viewSwitcher.findViewById(R.id.tv_progress);
-//		mPbProgressBar = (ProgressBar) viewSwitcher
-//				.findViewById(R.id.pb_progressbar);
-//		mPbProgressBar.setMax(100);
-//	}
 
 	private void buildGameLayout(Bundle savedInstanceState) {
 		mQuizzLayout = findViewById(R.id.quizzLayout);
@@ -162,5 +136,4 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 	public void setHideAbOnRotationChange(boolean hide) {
 		mHideAbOnRotation = hide;
 	}
-
 }
