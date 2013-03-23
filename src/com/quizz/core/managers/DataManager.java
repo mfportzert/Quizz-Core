@@ -38,22 +38,42 @@ public class DataManager {
 		return null;
 	}
 	
-	public static boolean isLastLevel(Level level) {
-		return (getNextLevel(level) == null) ? true : false;
+	/**
+	 * @param level
+	 * @return null if level is null, if section is not found or 
+	 * if section's levels list is empty. Otherwise, true if last, false if not.
+	 */
+	public static Boolean isLastLevel(Level level) {
+		if (level != null) {
+			Section section = getSection(level.sectionId);
+			if (section != null && section.levels != null && section.levels.size() > 0) {
+				if (section.levels.indexOf(level) == (section.levels.size() - 1)) {
+					return true;
+				}
+				return false;
+			}
+		}
+		return null;
 	}
 	
+	/**
+	 * @param currentLevel
+	 * @return
+	 */
 	public static Level getNextLevel(Level currentLevel) {
-		Section section = getSection(currentLevel.sectionId);
-		if (section != null && section.levels != null) {
-			for (Level level : section.levels) {
-				// Compare reference, mCacheSections must be the only data access source
-				if (level == currentLevel) {
-					// If not the last level of the section, get next
-					int levelIndex = section.levels.indexOf(level);
-					if (levelIndex < (section.levels.size() - 1)) {
-						return section.levels.get(levelIndex + 1);
-					} else {
-						return null;
+		if (currentLevel != null) {
+			Section section = getSection(currentLevel.sectionId);
+			if (section != null && section.levels != null) {
+				for (Level level : section.levels) {
+					// Compare reference, mCacheSections must be the only data access source
+					if (level == currentLevel) {
+						// If not the last level of the section, get next
+						int levelIndex = section.levels.indexOf(level);
+						if (levelIndex < (section.levels.size() - 1)) {
+							return section.levels.get(levelIndex + 1);
+						} else {
+							return null;
+						}
 					}
 				}
 			}
