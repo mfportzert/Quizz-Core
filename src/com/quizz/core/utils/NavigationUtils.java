@@ -64,9 +64,9 @@ public class NavigationUtils {
 	 * @param transaction
 	 * @param args
 	 */
-	public static void directNavigationTo(Class<?> cls,
-			FragmentManager fragmentManager, FragmentContainer container,
-			boolean addToStack, FragmentTransaction transaction, Bundle args, boolean forceReplace) {
+	public static void directNavigationTo(Class<?> cls, FragmentManager fragmentManager, 
+			FragmentContainer container, boolean addToStack, FragmentTransaction transaction, 
+			Bundle args, boolean forceReplace) {
 		try {
 			Fragment fragment = fragmentManager.findFragmentByTag(cls.getSimpleName());
 			if (fragment == null || forceReplace) {
