@@ -14,6 +14,7 @@ import com.quizz.core.application.BaseQuizzApplication;
 import com.quizz.core.dialogs.ConfirmQuitDialog;
 import com.quizz.core.dialogs.ConfirmQuitDialog.Closeable;
 import com.quizz.core.interfaces.FragmentContainer;
+import com.quizz.core.utils.PreferencesUtils;
 import com.quizz.core.widgets.QuizzActionBar;
 
 public abstract class BaseQuizzActivity extends SherlockFragmentActivity
@@ -91,7 +92,8 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 	@Override
 	public void onBackPressed() {
-		if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+		if (getSupportFragmentManager().getBackStackEntryCount() == 0 
+				&& PreferencesUtils.isExitPopupEnabled(this)) {
 			if (mConfirmQuitDialog == null) {
 				mConfirmQuitDialog = (mConfirmQuitDialogView == null) ? new ConfirmQuitDialog(
 						this) : new ConfirmQuitDialog(this,
