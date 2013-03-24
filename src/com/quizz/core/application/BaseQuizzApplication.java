@@ -15,6 +15,9 @@ public class BaseQuizzApplication extends Application {
 			"BaseQuizzApplication.UNLOCKED_HINTS_COUNT";
 	public static final String PREF_DEFAULT_NB_HINTS_ONSUCCESS_KEY = 
 			"BaseQuizzApplication.DEFAULT_NB_HINTS_ONSUCCESS";
+	public static final String PREF_AUDIO_KEY = "BaseQuizzApplication.AUDIO";
+	public static final String PREF_VIBRATION_KEY = "BaseQuizzApplication.VIBRATION";
+	public static final String PREF_EXIT_POPUP_KEY = "BaseQuizzApplication.EXIT_POPUP";
 	
 	public static final int PREF_VERSION_VALUE = 1;
 	public static final int PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE = 3;
