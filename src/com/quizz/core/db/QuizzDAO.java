@@ -68,9 +68,9 @@ public enum QuizzDAO {
 				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_HINT_TYPE + ", "
 				+ DbHelper.TABLE_HINTS + "." + DbHelper.COLUMN_UNLOCKED
 				+ " FROM " + DbHelper.TABLE_HINTS
-				+ " WHERE " + DbHelper.COLUMN_FK_LEVEL + " = " + String.valueOf(level.id);
+				+ " WHERE " + DbHelper.COLUMN_FK_LEVEL + " = " + level.id;
 
-		Cursor cursor = mDbHelper.getWritableDatabase().rawQuery(sqlQuery, null);
+		Cursor cursor = mDbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
 		return cursor;
 	}
 
@@ -79,8 +79,9 @@ public enum QuizzDAO {
 		Cursor cursor = getHintsCursor(level);
 
 		cursor.moveToFirst();
-		while (!cursor.isLast()) {
+		while (!cursor.isAfterLast()) {
 			hints.add(cursorToHint(cursor));
+			cursor.moveToNext();
 		}
 		cursor.close();
 

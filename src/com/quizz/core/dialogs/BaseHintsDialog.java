@@ -24,25 +24,18 @@ public abstract class BaseHintsDialog extends Activity {
 	
 	protected void addTab(final int tabId, int viewId) {
 		if (mHintsContainer != null) {
-			// Clean content to keep only the new view
-			mHintsContainer.removeAllViews();
+			LayoutInflater inflater = LayoutInflater.from(this);
+			View tabContentView = inflater.inflate(viewId, mHintsContainer, true);
+			
+			onInitTab(tabId, tabContentView);
 			
 			final View tabView = findViewById(tabId);
-			LayoutInflater inflater = LayoutInflater.from(this);
-			final View tabContentView = inflater.inflate(viewId, null);
 			tabView.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					tabView.setPressed(true);
-					mHintsContainer.removeAllViews();
-					
-					// To avoid a 'child already has a parent'
-					if (tabContentView.getParent() != null) {
-						((ViewGroup) tabContentView.getParent()).removeView(tabContentView);
-					}
-					mHintsContainer.addView(tabContentView);
-					onTabSelected(tabId, tabContentView);
+					selectTab(tabId);
 				}
 			});
 			
@@ -50,7 +43,21 @@ public abstract class BaseHintsDialog extends Activity {
 		}
 	}
 
-	abstract protected void onTabSelected(int tabId, View contentView);
+	public void selectTab(int tabId) {
+		int key = 0;
+		for(int i = 0; i < mTabs.size(); i++) {
+		   key = mTabs.keyAt(i);
+		   View view = mTabs.get(key);
+		   view.setVisibility((key == tabId) ? View.VISIBLE : View.GONE);
+		}
+		
+		View tabContentView = mTabs.get(tabId);
+		onSelectTab(tabId, tabContentView);
+	}
+	
+	abstract protected void onSelectTab(int tabId, View contentView);
+	
+	abstract protected void onInitTab(int tabId, View contentView);
 	
 	// ===========================================================
 	// Listeners
