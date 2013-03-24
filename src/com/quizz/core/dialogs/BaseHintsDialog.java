@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -13,6 +12,7 @@ public abstract class BaseHintsDialog extends Activity {
 
 	protected ViewGroup mHintsContainer;
 	private SparseArray<View> mTabs = new SparseArray<View>();
+	private View mCurrentTabView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +24,16 @@ public abstract class BaseHintsDialog extends Activity {
 	
 	protected void addTab(final int tabId, int viewId) {
 		if (mHintsContainer != null) {
-			LayoutInflater inflater = LayoutInflater.from(this);
-			View tabContentView = inflater.inflate(viewId, mHintsContainer, true);
-			
+			View tabContentView = getLayoutInflater().inflate(viewId, null);
 			onInitTab(tabId, tabContentView);
+			mHintsContainer.addView(tabContentView);
 			
 			final View tabView = findViewById(tabId);
 			tabView.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					tabView.setPressed(true);
-					selectTab(tabId);
+					selectTab(tabId, tabView);
 				}
 			});
 			
@@ -43,16 +41,28 @@ public abstract class BaseHintsDialog extends Activity {
 		}
 	}
 
-	public void selectTab(int tabId) {
+	public void selectTab(int tabId, View tabView) {
+		if (mCurrentTabView != null) {
+			mCurrentTabView.setEnabled(true);
+		}
+		mCurrentTabView = tabView;
+		mCurrentTabView.setEnabled(false);
+
 		int key = 0;
+		View view;
 		for(int i = 0; i < mTabs.size(); i++) {
 		   key = mTabs.keyAt(i);
-		   View view = mTabs.get(key);
+		   view = mTabs.get(key);
 		   view.setVisibility((key == tabId) ? View.VISIBLE : View.GONE);
 		}
 		
 		View tabContentView = mTabs.get(tabId);
-		onSelectTab(tabId, tabContentView);
+		onSelectTab(tabId, tabContentView);		
+	}
+	
+	public void selectTab(int tabId) {
+		View tabView = findViewById(tabId);
+		selectTab(tabId, tabView);
 	}
 	
 	abstract protected void onSelectTab(int tabId, View contentView);
