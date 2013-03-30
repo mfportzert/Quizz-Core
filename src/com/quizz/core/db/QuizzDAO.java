@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.util.Log;
 
 import com.quizz.core.models.Hint;
@@ -77,7 +78,6 @@ public enum QuizzDAO {
 	public List<Hint> getHints(Level level) {
 		List<Hint> hints = new ArrayList<Hint>();
 		Cursor cursor = getHintsCursor(level);
-
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			hints.add(cursorToHint(cursor));

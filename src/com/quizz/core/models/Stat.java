@@ -39,7 +39,7 @@ public class Stat implements Parcelable {
 		this.setLabel(label);
 		this.setDone(done);
 		this.setTotal(total);
-		this.setProgressInPercent(done / (total != 0 ? total : 1) * 100);
+		this.setProgressInPercent((int) (done * 100.0f) / (total != 0 ? total : 1));
 		this.setAchievement(isAchievement);
 	}
 
