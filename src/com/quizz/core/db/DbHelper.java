@@ -44,9 +44,16 @@ public class DbHelper extends SQLiteOpenHelper {
 		String sectionsTable = getCreateSectionsTableQuery();
 		String levelsTable = getCreateLevelsTableQuery();
 		String hintsTable = getCreateHintsTableQuery();
-		db.execSQL(sectionsTable);
-		db.execSQL(levelsTable);
-		db.execSQL(hintsTable);
+		
+		db.beginTransaction();
+		try {
+			db.execSQL(sectionsTable);
+			db.execSQL(levelsTable);
+			db.execSQL(hintsTable);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	// Upgrading database

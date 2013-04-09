@@ -5,8 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.quizz.core.models.Hint;
 import com.quizz.core.models.Level;
@@ -27,39 +26,39 @@ public enum QuizzDAO {
 
 	public void insertSection(Section section) {
 
-		ContentValues sectionValues = new ContentValues();
-		sectionValues.put(DbHelper.COLUMN_NUMBER, section.number);
-		sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
-		long sectionInsertId = mDbHelper.getWritableDatabase().insert(
-				DbHelper.TABLE_SECTIONS, null, sectionValues);
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			ContentValues sectionValues = new ContentValues();
+			sectionValues.put(DbHelper.COLUMN_NUMBER, section.number);
+			sectionValues.put(DbHelper.COLUMN_UNLOCKED, section.status);
+			long sectionInsertId = db.insert(DbHelper.TABLE_SECTIONS, null, sectionValues);
 
-		for (Level level : section.levels) {
-			ContentValues levelValues = new ContentValues();
-			levelValues.put(DbHelper.COLUMN_IMAGE, level.imageName);
-			levelValues.put(DbHelper.COLUMN_INDICATION, level.indication);
-			levelValues.put(DbHelper.COLUMN_LINK, level.moreInfosLink);
-			levelValues.put(DbHelper.COLUMN_DIFFICULTY, level.difficulty);
-			levelValues.put(DbHelper.COLUMN_RESPONSE, level.response);
-			levelValues.put(DbHelper.COLUMN_PARTIAL_RESPONSE,
-					level.partialResponse);
-			levelValues.put(DbHelper.COLUMN_STATUS, Level.STATUS_LEVEL_UNCLEAR);
-			levelValues.put(DbHelper.COLUMN_FK_SECTION, sectionInsertId);
-			long levelInsertId = mDbHelper.getWritableDatabase().insert(
-					DbHelper.TABLE_LEVELS, null, levelValues);
-			Log.d("Quizz-Core - BaseQuizzDAO", "INFO [" + level.imageName
-					+ " : " + String.valueOf(level.getHints().size()) + "]");
-			for (Hint hint : level.getHints()) {
-				ContentValues hintValues = new ContentValues();
-				hintValues.put(DbHelper.COLUMN_HINT, hint.hint);
-				hintValues.put(DbHelper.COLUMN_HINT_TYPE, hint.type);
-				hintValues.put(DbHelper.COLUMN_UNLOCKED,
-						Hint.STATUS_HINT_UNREVEALED);
-				hintValues.put(DbHelper.COLUMN_FK_LEVEL, levelInsertId);
-				mDbHelper.getWritableDatabase().insert(DbHelper.TABLE_HINTS,
-						null, hintValues);
+			for (Level level : section.levels) {
+				ContentValues levelValues = new ContentValues();
+				levelValues.put(DbHelper.COLUMN_IMAGE, level.imageName);
+				levelValues.put(DbHelper.COLUMN_INDICATION, level.indication);
+				levelValues.put(DbHelper.COLUMN_LINK, level.moreInfosLink);
+				levelValues.put(DbHelper.COLUMN_DIFFICULTY, level.difficulty);
+				levelValues.put(DbHelper.COLUMN_RESPONSE, level.response);
+				levelValues.put(DbHelper.COLUMN_PARTIAL_RESPONSE, level.partialResponse);
+				levelValues.put(DbHelper.COLUMN_STATUS, Level.STATUS_LEVEL_UNCLEAR);
+				levelValues.put(DbHelper.COLUMN_FK_SECTION, sectionInsertId);
+				long levelInsertId = db.insert(DbHelper.TABLE_LEVELS, null, levelValues);
+				
+				for (Hint hint : level.getHints()) {
+					ContentValues hintValues = new ContentValues();
+					hintValues.put(DbHelper.COLUMN_HINT, hint.hint);
+					hintValues.put(DbHelper.COLUMN_HINT_TYPE, hint.type);
+					hintValues.put(DbHelper.COLUMN_UNLOCKED, Hint.STATUS_HINT_UNREVEALED);
+					hintValues.put(DbHelper.COLUMN_FK_LEVEL, levelInsertId);
+					db.insert(DbHelper.TABLE_HINTS, null, hintValues);
+				}
 			}
+			db.setTransactionSuccessful();// marks a commit
+		} finally {
+			db.endTransaction();
 		}
-
 	}
 
 	public Cursor getHintsCursor(Level level) {
@@ -110,7 +109,8 @@ public enum QuizzDAO {
 					+ " = "
 						+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;
 
-		Cursor cursor = mDbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		Cursor cursor = db.rawQuery(sqlQuery, null);
 		return cursorToSections(cursor);
 	}
 

@@ -64,20 +64,48 @@ public class DataManager {
 		if (currentLevel != null) {
 			Section section = getSection(currentLevel.sectionId);
 			if (section != null && section.levels != null) {
-				for (Level level : section.levels) {
-					// Compare reference, mCacheSections must be the only data access source
-					if (level == currentLevel) {
-						// If not the last level of the section, get next
-						int levelIndex = section.levels.indexOf(level);
-						if (levelIndex < (section.levels.size() - 1)) {
-							return section.levels.get(levelIndex + 1);
-						} else {
-							return null;
-						}
-					}
+				// Get index of current level
+				int levelIndex = section.levels.indexOf(currentLevel);
+				// If index was found and is < section's levels size
+				if (levelIndex > -1 && levelIndex < (section.levels.size() - 1)) {
+					return section.levels.get(levelIndex + 1);
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param level
+	 * @return null if level is null, if section is not found or 
+	 * if section's levels list is empty. Otherwise, true if last, false if not.
+	 */
+	public static Boolean isLastOpenedLevelInSection(Level level) {
+		if (level != null) {
+			Section section = getSection(level.sectionId);
+			if (section != null && section.levels != null && section.levels.size() > 0) {
+				// TODO
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @param currentLevel
+	 * @return
+	 */
+	public static Level getNextOpenedLevelInSection(Level currentLevel) {
+		if (currentLevel != null) {
+			Section section = getSection(currentLevel.sectionId);
+			if (section != null && section.levels != null) {
+				// Get index of current level
+				int levelIndex = section.levels.indexOf(currentLevel);
+				// If index was found and is < section's levels size
+				if (levelIndex > -1) {
+					// TODO
+				}
+			}
+		}
+		return null;		
 	}
 }
