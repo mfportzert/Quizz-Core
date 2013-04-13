@@ -8,6 +8,12 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+/**
+ * Progress values are from 0 - 100f
+ * 
+ * @author M-F.P
+ *
+ */
 public class SectionProgressView extends ImageView {
 
 	private int mProgressRes = 0;
@@ -19,6 +25,11 @@ public class SectionProgressView extends ImageView {
 	private int mPaddingRight = 0;
 	private int mPaddingBottom = 0;
 
+	/**
+	 * even if progress if 0, display a tiny progress drawable
+	 */
+	private boolean mDisplayInitialProgressIfEmpty = false;
+	
 	private Rect mProgressBounds = new Rect();
 
 	public SectionProgressView(Context context, AttributeSet attrs, int defStyle) {
@@ -60,17 +71,31 @@ public class SectionProgressView extends ImageView {
 		mPaddingBottom = bottom;
 	}
 
+	public void setDisplayInitialProgressIfEmpty(boolean display) {
+		mDisplayInitialProgressIfEmpty = display;
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		if (mProgressBounds != null && mProgressDrawable != null) {
+		if (mProgressDrawable != null) {
 			mProgressBounds.left = mPaddingLeft;
 			mProgressBounds.top = mPaddingTop;
-			mProgressBounds.right = (int) ((getWidth() - mPaddingRight)
-					* mProgressValue / 100f);
 			mProgressBounds.bottom = getHeight() - mPaddingBottom;
-
+		
+			if (mProgressValue == 0) {
+				if (mDisplayInitialProgressIfEmpty) {
+					mProgressBounds.right = mProgressBounds.left + mProgressDrawable.getIntrinsicWidth();
+				} else {
+					return;
+				}
+			} else {
+				int progressWidth = (int) ((getWidth() - mPaddingLeft - mPaddingRight)
+						* mProgressValue / 100f);
+				mProgressBounds.right = mProgressBounds.left + progressWidth;
+			}
+			
 			mProgressDrawable.setBounds(mProgressBounds);
 			mProgressDrawable.draw(canvas);
 		}
