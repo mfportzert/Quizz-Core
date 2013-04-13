@@ -27,6 +27,21 @@ public class DataManager {
 		}
 		return mCacheSections;
 	}
+	
+	public static synchronized void resetGame() {
+		if (mCacheSections != null) {
+			List<Section> sections = getSections();
+			for (Section section : sections) {
+				if (section.id != 1) {
+					section.status = Section.SECTION_LOCKED;
+				}
+				for (Level level : section.levels) {
+					level.status = Level.STATUS_LEVEL_UNCLEAR;
+				}
+			}
+			mCacheSections = sections;
+		}
+	}
 
 	public static Section getSection(int id) {
 		List<Section> sections = getSections();

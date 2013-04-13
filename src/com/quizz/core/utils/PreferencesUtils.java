@@ -3,13 +3,19 @@ package com.quizz.core.utils;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.quizz.core.application.BaseQuizzApplication;
 
 public class PreferencesUtils {
 
+//	public static SharedPreferences sharedPreferences(Activity pActivity) {
+//		return ((Activity) pActivity).getPreferences(Activity.MODE_PRIVATE);
+//	}
+
 	public static SharedPreferences sharedPreferences(Activity pActivity) {
-		return ((Activity) pActivity).getPreferences(Activity.MODE_PRIVATE);
+		String sharedPreferencesKey = pActivity.getApplication().getPackageName();
+		return ((Activity) pActivity).getSharedPreferences(sharedPreferencesKey, Activity.MODE_PRIVATE);
 	}
 	
 	public static boolean containsVibrationPreference(Activity pActivity) {
