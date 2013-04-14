@@ -7,9 +7,14 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 import com.quizz.core.db.QuizzDAO;
+import com.quizz.core.managers.DataManager;
 
 public class Section implements Parcelable {
-
+	/**
+	 * Required cleared percentage to unlock next section
+	 */
+	public static float SECTION_DEFAULT_UNLOCK_PERC = 0.5f;
+	
 	public static int SECTION_UNLOCKED = 1;
 	public static int SECTION_LOCKED = 0;
 
@@ -77,5 +82,26 @@ public class Section implements Parcelable {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * @return 0.0f - 1.0f
+	 */
+	public float getClearedPerc() {
+		float clearedCount = 0;
+		for (Level level : levels) {
+			if (level.status == Level.STATUS_LEVEL_CLEAR) {
+				clearedCount++;
+			}
+		}
+		return clearedCount / (float) levels.size();
+	}
+	
+	public boolean isLast() {
+		return DataManager.isLastSection(this);
+	}
+	
+	public Section getNext() {
+		return DataManager.getNextSection(this);
 	}
 }
