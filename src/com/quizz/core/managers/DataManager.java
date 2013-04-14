@@ -21,7 +21,7 @@ public class DataManager {
 		mCacheSections = sections;
 	}
 
-	public static List<Section> getSections() {
+	public static synchronized List<Section> getSections() {
 		if (mCacheSections == null) {
 			mCacheSections = QuizzDAO.INSTANCE.getSections();
 		}
@@ -73,7 +73,7 @@ public class DataManager {
 	
 	/**
 	 * @param currentLevel
-	 * @return
+	 * @return null if not found or last level
 	 */
 	public static Level getNextLevel(Level currentLevel) {
 		if (currentLevel != null) {
@@ -121,6 +121,49 @@ public class DataManager {
 				}
 			}
 		}
-		return null;		
+		return null;
+	}
+	
+	/**
+	 * @param currentSection
+	 * @return null if not found or last section
+	 */
+	public static Section getNextSection(Section currentSection) {
+		List<Section> sections = getSections();
+		// Get index of current section
+		int sectionIndex = sections.indexOf(currentSection);
+		// If index was found and is < sections size
+		if (sectionIndex > -1 && sectionIndex < (sections.size() - 1)) {
+			return sections.get(sectionIndex + 1);
+		}
+		return null;
+	}
+	
+	/**
+	 * @param currentSection
+	 * @return
+	 */
+	public static boolean isLastSection(Section currentSection) {
+		List<Section> sections = getSections();
+		return (sections.indexOf(currentSection) == sections.size() - 1);
+	}
+	
+	/**
+	 * @param sectionId
+	 * @return true if nextSection has been unlocked, false if 
+	 * 		   already unlocked or if currentSection is last
+	 */
+	public static boolean unlockNextSectionIfNecessary(int sectionId) {
+		Section currentSection = getSection(sectionId);
+		if (!currentSection.isLast() && 
+				currentSection.getClearedPerc() >= Section.SECTION_DEFAULT_UNLOCK_PERC) {
+			Section nextSection = currentSection.getNext();
+			if (nextSection.status == Section.SECTION_LOCKED) {
+				nextSection.status = Section.SECTION_UNLOCKED;
+				nextSection.update();
+				return true;
+			}
+		}
+		return false;
 	}
 }
