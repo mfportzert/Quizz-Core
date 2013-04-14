@@ -66,8 +66,16 @@ public class Section implements Parcelable {
 		return 0;
 	}
 
-	
 	public void update() {
 		QuizzDAO.INSTANCE.updateSection(this);
+	}
+	
+	public boolean isComplete() {
+		for (Level level : levels) {
+			if (level.status == Level.STATUS_LEVEL_UNCLEAR) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
