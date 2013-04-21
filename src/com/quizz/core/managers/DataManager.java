@@ -71,25 +71,66 @@ public class DataManager {
 		return null;
 	}
 	
+	public static Level getNextLevel(Level currentLevel) {
+		return getNextLevel(currentLevel, true);
+	}
+
+	public static Level getPreviousLevel(Level currentLevel) {
+		return getPreviousLevel(currentLevel, true);
+	}
+
 	/**
 	 * @param currentLevel
+	 * @param circular. If circular is true, returns first level when currentLevel is last
 	 * @return null if not found or last level
 	 */
-	public static Level getNextLevel(Level currentLevel) {
+	public static Level getNextLevel(Level currentLevel, boolean circular) {
 		if (currentLevel != null) {
 			Section section = getSection(currentLevel.sectionId);
 			if (section != null && section.levels != null) {
 				// Get index of current level
 				int levelIndex = section.levels.indexOf(currentLevel);
+				if (levelIndex == -1) {
+					return null;
+				}
+				
 				// If index was found and is < section's levels size
-				if (levelIndex > -1 && levelIndex < (section.levels.size() - 1)) {
+				if (levelIndex >= 0 && levelIndex < (section.levels.size() - 1)) {
 					return section.levels.get(levelIndex + 1);
+				} else if (circular && levelIndex == (section.levels.size() - 1)) {
+					return section.levels.get(0);
 				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * @param currentLevel
+	 * @param circular. If circular is true, returns last level when currentLevel is first
+	 * @return null if not found or last level
+	 */
+	public static Level getPreviousLevel(Level currentLevel, boolean circular) {
+		if (currentLevel != null) {
+			Section section = getSection(currentLevel.sectionId);
+			if (section != null && section.levels != null) {
+				// Get index of current level
+				int levelIndex = section.levels.indexOf(currentLevel);
+				if (levelIndex == -1) {
+					return null;
+				}
+				
+				// If index was found and is < section's levels size
+				if (levelIndex > 0) {
+					return section.levels.get(levelIndex - 1);
+				} else if (circular && levelIndex == 0) {
+					return section.levels.get(section.levels.size() - 1);
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @param level
 	 * @return null if level is null, if section is not found or 
