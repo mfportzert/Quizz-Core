@@ -78,13 +78,16 @@ public class NavigationUtils {
 				if (addToStack) {
 					transaction.addToBackStack(null);
 				}
-				if (args != null) {
+				if (args != null && !fragment.isAdded()) {
 					fragment.setArguments(args);
 				}
 				transaction.replace(container.getId(), fragment, cls.getSimpleName());
-				transaction.commit();
+			} else {
+				transaction.show(fragment);
 			}
-
+			
+			transaction.commit();
+			
 		} catch (InstantiationException e) {
 			Log.e(TAG, e.getMessage(), e);
 		} catch (IllegalAccessException e) {
