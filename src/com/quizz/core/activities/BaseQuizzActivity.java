@@ -1,6 +1,9 @@
 package com.quizz.core.activities;
 
+import java.util.Locale;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -37,6 +40,7 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 		setContentView(R.layout.activity_quizz);
 		buildGameLayout(savedInstanceState);
+		Log.d("TEST", Locale.getDefault().getLanguage());
 	}
 
 	private void buildGameLayout(Bundle savedInstanceState) {

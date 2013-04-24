@@ -1,16 +1,21 @@
 package com.quizz.core.db;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Locale;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DbHelper extends SQLiteOpenHelper {
 
 	// Database Version
 	private static final int DATABASE_VERSION = 1;
-
-	// Database Name
-	private static final String DATABASE_NAME = "quizz.db";
 
 	// TABLES
 	public static final String TABLE_SECTIONS = "sections";
@@ -34,26 +39,119 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_FK_SECTION = "fk_section_id";
 	public static final String COLUMN_FK_LEVEL = "fk_level_id";
 
+	private String mDatabasesPath;
+	private String mDatabaseName;
+	private String mUserDataDatabaseName;
+	private Context mContext;
+	
 	public DbHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		super(context, 
+				context.getPackageName().substring(
+						context.getPackageName().lastIndexOf('.') + 1) + ".db",
+				null,
+				DATABASE_VERSION);
+		mContext = context;
+		mDatabasesPath = "/data/data/" + context.getPackageName() + "/databases";
+		mDatabaseName = context.getPackageName().substring(
+				context.getPackageName().lastIndexOf('.') + 1) + ".db";
+		
+	}
+	
+	private String getAppNameFormPackageName() {
+		return mContext.getPackageName().substring(mContext.getPackageName().lastIndexOf('.') + 1);
+	}
+	
+	public void createDataBases() throws IOException {
+
+		if (this.dataBaseExists(null))
+			return;
+		// By calling this method with empty db, it will create one in the default system path
+		// of the app so I'm able to overwrite that db with our db.
+		this.getReadableDatabase();
+		try {
+			boolean copyGameDataOnly;
+			if (this.dataBaseExists(getAppNameFormPackageName() + "_userdata.db"))
+				copyGameDataOnly = true;
+			else
+				copyGameDataOnly = false;
+			this.copyDataBases(copyGameDataOnly);
+		} catch (IOException e) {
+			throw new Error("Error copying database");
+		}
+
+	}
+
+	private boolean dataBaseExists(String dbName) {
+
+		if (dbName == null || dbName.length() == 0)
+			dbName = mDatabaseName;
+		
+		boolean databaseExists = false;		
+		try {
+			String myPath = mDatabasesPath + dbName;
+			SQLiteDatabase checkDB = SQLiteDatabase.openDatabase(myPath, null,
+					SQLiteDatabase.OPEN_READONLY);
+			if (checkDB != null) {
+				databaseExists = true;
+				checkDB.close();
+			}
+		} catch (SQLiteException e) {
+			databaseExists = false;
+		}
+		return databaseExists;
+	}
+
+	private void copyDataBases(boolean copyDataAndProgressDb) throws IOException {
+
+		byte[] buffer = new byte[1024];
+		int length;
+		String assetDbFileName;
+		String packageName = mContext.getPackageName();
+		
+		if (Locale.getDefault().getLanguage().equalsIgnoreCase("fr"))
+			assetDbFileName = packageName.substring(packageName.lastIndexOf('.') + 1) + "_fr.db";
+		else
+			assetDbFileName = packageName.substring(packageName.lastIndexOf('.') + 1) + "_en.db";
+		
+		InputStream myInput = mContext.getAssets().open("databases/" + assetDbFileName);
+		String outFileName = mDatabasesPath + mDatabaseName;
+		OutputStream myOutput = new FileOutputStream(outFileName);
+
+		while ((length = myInput.read(buffer)) > 0)
+			myOutput.write(buffer, 0, length);
+
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
+		
+		if (copyDataAndProgressDb)
+		{
+			myInput = mContext.getAssets().open("databases/" + packageName + "_userdata.db");
+			outFileName = mDatabasesPath + mUserDataDatabaseName;
+			myOutput = new FileOutputStream(outFileName);
+
+			while ((length = myInput.read(buffer)) > 0)
+				myOutput.write(buffer, 0, length);			
+		}
+
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		String sectionsTable = getCreateSectionsTableQuery();
-		String levelsTable = getCreateLevelsTableQuery();
-		String hintsTable = getCreateHintsTableQuery();
+		 String sectionsTable = getCreateSectionsTableQuery();
+		 String levelsTable = getCreateLevelsTableQuery();
+		 String hintsTable = getCreateHintsTableQuery();
 		
-		db.beginTransaction();
-		try {
-			db.execSQL(sectionsTable);
-			db.execSQL(levelsTable);
-			db.execSQL(hintsTable);
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
+		 db.beginTransaction();
+		 try {
+			 db.execSQL(sectionsTable);
+			 db.execSQL(levelsTable);
+			 db.execSQL(hintsTable);
+			 db.setTransactionSuccessful();
+		 } finally {
+			 db.endTransaction();
+		 }
 	}
 
 	// Upgrading database
