@@ -34,6 +34,8 @@ public class Level implements Parcelable {
 	@SerializedName("id")
 	public int id;
 
+	public String ref;
+	
 	@SerializedName("response")
 	public String response;
 
@@ -49,12 +51,6 @@ public class Level implements Parcelable {
 	@SerializedName("image")
 	public String imageName;
 
-	@SerializedName("difficulty")
-	public String difficulty;
-	
-	@SerializedName("hints")
-	private ArrayList<Hint> hints;
-
 	public int status = STATUS_LEVEL_UNCLEAR;
 	public int sectionId = 0;
 	public float rotation = 0;
@@ -68,13 +64,12 @@ public class Level implements Parcelable {
 	 */
 	public Level(Parcel parcel) {
 		this.id = parcel.readInt();
+		this.ref = parcel.readString();
 		this.response = parcel.readString();
 		this.partialResponse = parcel.readString();
 		this.indication = parcel.readString();
 		this.moreInfosLink = parcel.readString();
 		this.imageName = parcel.readString();
-		this.difficulty = parcel.readString();
-		parcel.readList(this.hints, Level.class.getClassLoader());
 		this.status = parcel.readInt();
 		this.sectionId = parcel.readInt();
 		this.rotation = parcel.readFloat();
@@ -88,25 +83,17 @@ public class Level implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(this.id);
+		dest.writeString(this.ref);
 		dest.writeString(this.response);
 		dest.writeString(this.partialResponse);
 		dest.writeString(this.indication);
 		dest.writeString(this.moreInfosLink);
 		dest.writeString(this.imageName);
-		dest.writeString(this.difficulty);
-		dest.writeList(this.hints);
 		dest.writeInt(this.status);
 		dest.writeInt(this.sectionId);
 		dest.writeFloat(this.rotation);
 	}
 
-	public ArrayList<Hint> getHints() {
-		if (this.hints == null) {
-			this.hints = (ArrayList<Hint>) QuizzDAO.INSTANCE.getHints(this);
-		}
-		return this.hints;
-	}
-	
 	public void update() {
 		QuizzDAO.INSTANCE.updateLevel(this);
 	}

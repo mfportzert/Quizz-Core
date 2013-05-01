@@ -34,6 +34,8 @@ public class Section implements Parcelable {
 	@SerializedName("section")
 	public int number;
 
+	public String ref;
+	
 	@SerializedName("name")
 	public String name;
 
@@ -51,6 +53,7 @@ public class Section implements Parcelable {
 	 */
 	public Section(Parcel parcel) {
 		this.id = parcel.readInt();
+		this.ref = parcel.readString();
 		this.number = parcel.readInt();
 		this.name = parcel.readString();
 		this.status = parcel.readInt();
@@ -60,6 +63,7 @@ public class Section implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(this.id);
+		dest.writeString(this.ref);
 		dest.writeInt(this.number);
 		dest.writeString(this.name);
 		dest.writeInt(this.status);

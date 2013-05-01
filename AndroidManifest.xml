@@ -15,5 +15,5 @@
         android:name="BaseQuizzApplication" >
 		
     </application>
-
+    
 </manifest>

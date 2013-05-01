@@ -1,5 +1,7 @@
 package com.quizz.core.db;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +23,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String TABLE_SECTIONS = "sections";
 	public static final String TABLE_LEVELS = "levels";
 	public static final String TABLE_HINTS = "hints";
+	public static final String TABLE_USERDATA = "user_data";
 
 	// COLUMNS
 	public static final String COLUMN_ID = "id";
@@ -34,106 +37,125 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_HINT = "hint";
 	public static final String COLUMN_HINT_TYPE = "hint_type";
 	public static final String COLUMN_RESPONSE = "response";
-	public static final String COLUMN_STATUS = "status";
 	public static final String COLUMN_PARTIAL_RESPONSE = "partial_response";
 	public static final String COLUMN_FK_SECTION = "fk_section_id";
 	public static final String COLUMN_FK_LEVEL = "fk_level_id";
 
-	private String mDatabasesPath;
-	private String mDatabaseName;
-	private String mUserDataDatabaseName;
+	public static final String COLUMN_STATUS = "status";
+	public static final String COLUMN_REF_FROM_TABLE = "ref_from_table";
+	public static final String COLUMN_REF = "ref";
+	
+	private static final int LANG_FR = 0;
+	private static final int LANG_EN = 1;
+	
+	private String mGamedataDBName;	
+	private String mUserdataDBName;
+
+	public String mAppName;
+	
+	private int mDBLang;
+	
 	private Context mContext;
 	
-	public DbHelper(Context context) {
-		super(context, 
-				context.getPackageName().substring(
-						context.getPackageName().lastIndexOf('.') + 1) + ".db",
+	private String mGamedataDBFullPath;
+	private String mUserdataDBFullPath;
+	
+	private boolean mUserdataDBExists;
+	private boolean mGamedataDBExists;
+	
+	public DbHelper(Context ctx) {
+		super(ctx,
+				ctx.getPackageName().substring(
+						ctx.getPackageName().lastIndexOf('.') + 1)
+				  + "_userdata" + ".db",
 				null,
 				DATABASE_VERSION);
-		mContext = context;
-		mDatabasesPath = "/data/data/" + context.getPackageName() + "/databases";
-		mDatabaseName = context.getPackageName().substring(
-				context.getPackageName().lastIndexOf('.') + 1) + ".db";
-		
-	}
-	
-	private String getAppNameFormPackageName() {
-		return mContext.getPackageName().substring(mContext.getPackageName().lastIndexOf('.') + 1);
-	}
-	
-	public void createDataBases() throws IOException {
 
-		if (this.dataBaseExists(null))
-			return;
-		// By calling this method with empty db, it will create one in the default system path
-		// of the app so I'm able to overwrite that db with our db.
-		this.getReadableDatabase();
+		String gamedataDirectoryPath = android.os.Environment.getExternalStorageDirectory().toString()
+				+ "/WorldTourQuiz/gamedata/";
+		
+		mContext = ctx;
+		mAppName = ctx.getPackageName().substring(ctx.getPackageName().lastIndexOf('.') + 1);
+
+		mUserdataDBName = mAppName + "_userdata.db";
+		mGamedataDBName = mAppName + ".db";
+		
+		mDBLang = (Locale.getDefault().getLanguage().equalsIgnoreCase("fr")) ? LANG_FR : LANG_EN;
+		
+		mUserdataDBExists = ctx.getDatabasePath(mUserdataDBName).exists();
+		mGamedataDBExists = (new File(gamedataDirectoryPath + mGamedataDBName)).exists();
+		
+		mUserdataDBFullPath = super.getReadableDatabase().getPath();
+		mGamedataDBFullPath = gamedataDirectoryPath + mGamedataDBName;
+		this.createGamedataDirOnSDCard(gamedataDirectoryPath);
+	}
+	
+	private void createGamedataDirOnSDCard(String gamedataDirectoryPath)
+	{
+		File dbFile = new File(mGamedataDBFullPath);
+		if (!dbFile.exists()) {
+			dbFile.getParentFile().mkdirs();
+			try {
+				dbFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void createDatabases() throws IOException
+	{
 		try {
-			boolean copyGameDataOnly;
-			if (this.dataBaseExists(getAppNameFormPackageName() + "_userdata.db"))
-				copyGameDataOnly = true;
-			else
-				copyGameDataOnly = false;
-			this.copyDataBases(copyGameDataOnly);
+			if (!mUserdataDBExists)
+			{
+				String assetDBFilename = mAppName + "_userdata.db";
+				this.copyDatabase(assetDBFilename, mUserdataDBFullPath);
+				mUserdataDBExists = true;
+			}
+			if (!mGamedataDBExists)
+			{
+				String assetDBFilename = mAppName + ((mDBLang == LANG_FR) ? "_fr" : "_en") + ".db";
+				this.copyDatabase(assetDBFilename, mGamedataDBFullPath);
+				mGamedataDBExists = true;
+			}
 		} catch (IOException e) {
 			throw new Error("Error copying database");
 		}
-
 	}
 
-	private boolean dataBaseExists(String dbName) {
-
-		if (dbName == null || dbName.length() == 0)
-			dbName = mDatabaseName;
-		
-		boolean databaseExists = false;		
-		try {
-			String myPath = mDatabasesPath + dbName;
-			SQLiteDatabase checkDB = SQLiteDatabase.openDatabase(myPath, null,
-					SQLiteDatabase.OPEN_READONLY);
-			if (checkDB != null) {
-				databaseExists = true;
-				checkDB.close();
-			}
-		} catch (SQLiteException e) {
-			databaseExists = false;
-		}
-		return databaseExists;
+	public SQLiteDatabase getReadableDatabase() {
+		return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READONLY);
 	}
+	
+	public SQLiteDatabase getReadableUserdataDatabase() {
+		return super.getReadableDatabase();
+	}
+	
+	public SQLiteDatabase getWritableUserdataDatabase() {
+		return super.getWritableDatabase();
+	}
+	
+	public SQLiteDatabase getWritableDatabase() {
+		return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE);
+	}  
+	
+	private void copyDatabase(String assetDBFilename, String dbFullPath) throws IOException {
 
-	private void copyDataBases(boolean copyDataAndProgressDb) throws IOException {
-
-		byte[] buffer = new byte[1024];
 		int length;
-		String assetDbFileName;
-		String packageName = mContext.getPackageName();
+		byte[] buffer = new byte[1024];
+		InputStream input = mContext.getAssets().open("databases/" + assetDBFilename);
+		String outputFilename = dbFullPath;
 		
-		if (Locale.getDefault().getLanguage().equalsIgnoreCase("fr"))
-			assetDbFileName = packageName.substring(packageName.lastIndexOf('.') + 1) + "_fr.db";
-		else
-			assetDbFileName = packageName.substring(packageName.lastIndexOf('.') + 1) + "_en.db";
-		
-		InputStream myInput = mContext.getAssets().open("databases/" + assetDbFileName);
-		String outFileName = mDatabasesPath + mDatabaseName;
-		OutputStream myOutput = new FileOutputStream(outFileName);
-
-		while ((length = myInput.read(buffer)) > 0)
-			myOutput.write(buffer, 0, length);
-
-		myOutput.flush();
-		myOutput.close();
-		myInput.close();
-		
-		if (copyDataAndProgressDb)
-		{
-			myInput = mContext.getAssets().open("databases/" + packageName + "_userdata.db");
-			outFileName = mDatabasesPath + mUserDataDatabaseName;
-			myOutput = new FileOutputStream(outFileName);
-
-			while ((length = myInput.read(buffer)) > 0)
-				myOutput.write(buffer, 0, length);			
+		try {
+			OutputStream output = new FileOutputStream(outputFilename);
+			while ((length = input.read(buffer)) > 0)
+				output.write(buffer, 0, length);
+			output.flush();
+			output.close();
+			input.close();
+		} catch (FileNotFoundException e) {
+			Log.d("ERROR COPYING DB", "FILE NOT FOUND EXCEPTION : " + outputFilename);
 		}
-
 	}
 
 	@Override
@@ -165,8 +187,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private String getCreateSectionsTableQuery() {
 		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder
-				.append("CREATE TABLE IF NOT EXISTS " + TABLE_SECTIONS + " (");
+		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_SECTIONS + " (");
 		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
 		sqlBuilder.append(COLUMN_NUMBER + " INTEGER, ");
 		sqlBuilder.append(COLUMN_UNLOCKED + " INTEGER");
@@ -207,6 +228,22 @@ public class DbHelper extends SQLiteOpenHelper {
 		String sql = sqlBuilder.toString();
 
 		return sql;
+	}
+
+	public String getGamedataDBName() {
+		return mGamedataDBName;
+	}
+
+	public String getUserdataDBName() {
+		return mUserdataDBName;
+	}
+
+	public String getGamedataDBFullPath() {
+		return mGamedataDBFullPath;
+	}
+
+	public String getUserdataDBFullPath() {
+		return mUserdataDBFullPath;
 	}
 
 }
