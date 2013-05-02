@@ -158,7 +158,7 @@ public enum QuizzDAO {
 		progressValues.put(DbHelper.COLUMN_STATUS, section.status);
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + section.ref + "\""
-				+ "AND" + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_SECTIONS;
+				+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_SECTIONS;
 		
 		mDbHelper.getWritableUserdataDatabase().update(
 				DbHelper.TABLE_USERDATA, progressValues, 
@@ -171,7 +171,7 @@ public enum QuizzDAO {
 		cv.put(DbHelper.COLUMN_STATUS, level.status);
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + level.ref + "\""
-				+ "AND" + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_LEVELS;
+				+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_LEVELS;
 		
 		mDbHelper.getWritableDatabase().update(
 				DbHelper.TABLE_USERDATA, cv, 
