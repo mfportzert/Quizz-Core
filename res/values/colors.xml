@@ -2,6 +2,7 @@
 <resources>
 	<drawable name="ab_bg_black">#aa000000</drawable>
 	<drawable name="ab_bg_none">#00000000</drawable>
+	<drawable name="fullscreen_picture_background">#c0000000</drawable>
 	<drawable name="ab_bg_holo_blue_light">#9933b5e5</drawable>
     <color name="background_holo_blue_light">#9933b5e5</color>
     <color name="holo_blue_light">#ff33b5e5</color>

@@ -53,24 +53,6 @@ public class DataManager {
 		return null;
 	}
 	
-	/**
-	 * @param level
-	 * @return null if level is null, if section is not found or 
-	 * if section's levels list is empty. Otherwise, true if last, false if not.
-	 */
-	public static Boolean isLastLevel(Level level) {
-		if (level != null) {
-			Section section = getSection(level.sectionId);
-			if (section != null && section.levels != null && section.levels.size() > 0) {
-				if (section.levels.indexOf(level) == (section.levels.size() - 1)) {
-					return true;
-				}
-				return false;
-			}
-		}
-		return null;
-	}
-	
 	public static Level getNextLevel(Level currentLevel) {
 		return getNextLevel(currentLevel, true);
 	}
@@ -132,15 +114,32 @@ public class DataManager {
 	}
 	
 	/**
-	 * @param level
-	 * @return null if level is null, if section is not found or 
-	 * if section's levels list is empty. Otherwise, true if last, false if not.
+	 * @param currentLevel
+	 * @return
 	 */
-	public static Boolean isLastOpenedLevelInSection(Level level) {
-		if (level != null) {
-			Section section = getSection(level.sectionId);
-			if (section != null && section.levels != null && section.levels.size() > 0) {
-				// TODO
+	public static Level getNextOpenedLevelInSection(Level currentLevel) {
+		if (currentLevel != null) {
+			Section section = getSection(currentLevel.sectionId);
+			if (section != null && section.levels != null && section.levels.size() > 1) {
+				// Get index of current level
+				int levelIndex = section.levels.indexOf(currentLevel);
+				// If index was found and is < section's levels size
+				if (levelIndex > -1) {
+					int savedIndex = levelIndex;
+					levelIndex++;
+					// we'll make a loop and search for the first open level until we
+					// get back to the currentLevel
+					while (levelIndex != savedIndex) {
+						Level tmpLevel = section.levels.get(levelIndex);
+						if (tmpLevel.status == Level.STATUS_LEVEL_UNCLEAR) {
+							return tmpLevel;
+						}
+						levelIndex++;
+						if (levelIndex == section.levels.size()) {
+							levelIndex = 0;
+						}
+					}
+				}
 			}
 		}
 		return null;
@@ -150,15 +149,12 @@ public class DataManager {
 	 * @param currentLevel
 	 * @return
 	 */
-	public static Level getNextOpenedLevelInSection(Level currentLevel) {
-		if (currentLevel != null) {
-			Section section = getSection(currentLevel.sectionId);
-			if (section != null && section.levels != null) {
-				// Get index of current level
-				int levelIndex = section.levels.indexOf(currentLevel);
-				// If index was found and is < section's levels size
-				if (levelIndex > -1) {
-					// TODO
+	public static Level getFirstOpenedLevelInSection(Section section) {
+		if (section.levels != null) {
+			// Get index of current level
+			for (Level level : section.levels) {
+				if (level.status == Level.STATUS_LEVEL_UNCLEAR) {
+					return level;
 				}
 			}
 		}
