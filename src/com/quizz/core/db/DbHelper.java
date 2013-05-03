@@ -160,74 +160,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-
-		 String sectionsTable = getCreateSectionsTableQuery();
-		 String levelsTable = getCreateLevelsTableQuery();
-		 String hintsTable = getCreateHintsTableQuery();
-		
-		 db.beginTransaction();
-		 try {
-			 db.execSQL(sectionsTable);
-			 db.execSQL(levelsTable);
-			 db.execSQL(hintsTable);
-			 db.setTransactionSuccessful();
-		 } finally {
-			 db.endTransaction();
-		 }
 	}
 
 	// Upgrading database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SECTIONS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LEVELS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_HINTS);
-		onCreate(db);
-	}
-
-	private String getCreateSectionsTableQuery() {
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_SECTIONS + " (");
-		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-		sqlBuilder.append(COLUMN_NUMBER + " INTEGER, ");
-		sqlBuilder.append(COLUMN_UNLOCKED + " INTEGER");
-		sqlBuilder.append(");");
-		String sql = sqlBuilder.toString();
-
-		return sql;
-	}
-
-	private String getCreateLevelsTableQuery() {
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_LEVELS + " (");
-		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-		sqlBuilder.append(COLUMN_LEVEL + " TEXT, ");
-		sqlBuilder.append(COLUMN_IMAGE + " TEXT, ");
-		sqlBuilder.append(COLUMN_INDICATION + " TEXT, ");
-		sqlBuilder.append(COLUMN_DIFFICULTY + " TEXT, ");
-		sqlBuilder.append(COLUMN_LINK + " TEXT, ");
-		sqlBuilder.append(COLUMN_RESPONSE + " TEXT, ");
-		sqlBuilder.append(COLUMN_PARTIAL_RESPONSE + " TEXT, ");
-		sqlBuilder.append(COLUMN_STATUS + " INTEGER, ");
-		sqlBuilder.append(COLUMN_FK_SECTION + " INTEGER");
-		sqlBuilder.append(");");
-		String sql = sqlBuilder.toString();
-
-		return sql;
-	}
-
-	private String getCreateHintsTableQuery() {
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE IF NOT EXISTS " + TABLE_HINTS + " (");
-		sqlBuilder.append(COLUMN_ID + " INTEGER PRIMARY KEY, ");
-		sqlBuilder.append(COLUMN_HINT + " TEXT, ");
-		sqlBuilder.append(COLUMN_HINT_TYPE + " INTEGER, ");
-		sqlBuilder.append(COLUMN_UNLOCKED + " INTEGER, ");
-		sqlBuilder.append(COLUMN_FK_LEVEL + " INTEGER");
-		sqlBuilder.append(");");
-		String sql = sqlBuilder.toString();
-
-		return sql;
 	}
 
 	public String getGamedataDBName() {
