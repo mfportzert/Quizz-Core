@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -19,13 +20,14 @@ import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.Rect;
+import android.util.Log;
 import android.widget.ImageView;
 
-import com.quizz.core.utils.ImageUtils;
 import com.quizz.core.utils.StreamUtils;
 
 /**
@@ -37,22 +39,19 @@ public class ImageLoader {
 	private static final String TAG = ImageLoader.class.getName();
 
 	MemoryCache mMemoryCache = new MemoryCache();
-	FileCache mFileCache;
 
 	private Map<ImageView, String> mImageViews = Collections
 			.synchronizedMap(new WeakHashMap<ImageView, String>());
 	ExecutorService mExecutorService;
 
 	private int mDefaultDrawableId = 0;
-	private boolean mHQLocalBitmap = true;
 	private ImageLoaderListener mDefaultImageLoaderListener;
 
 	public static enum ImageType {
-		LOCAL, REMOTE
+		SMALL, MEDIUM, NORMAL
 	}
 
 	public ImageLoader(Context context) {
-		mFileCache = new FileCache(context);
 		mExecutorService = Executors.newFixedThreadPool(5);
 	}
 
@@ -88,14 +87,7 @@ public class ImageLoader {
 			}
 		}
 	}
-
-	/**
-	 * Experimental
-	 */
-	public void setHQLocalBitmapEnabled(boolean hqEnabled) {
-		mHQLocalBitmap = hqEnabled;
-	}
-
+	
 	public void setDefaultImageLoaderListener(ImageLoaderListener listener) {
 		mDefaultImageLoaderListener = listener;
 	}
@@ -106,9 +98,9 @@ public class ImageLoader {
 		if (bitmap != null)
 			return bitmap;
 
-		bitmap = decodeFile(mFileCache.getFile(url));
+		/*bitmap = decodeFile(mFileCache.getFile(url));
 		if (bitmap != null)
-			return bitmap;
+			return bitmap;*/
 		return null;
 	}
 
@@ -121,75 +113,38 @@ public class ImageLoader {
 	}
 
 	private Bitmap getBitmap(PhotoToLoad photoToLoad) {
-		File f = mFileCache.getFile(photoToLoad.url);
-
-		// from SD cache
-		Bitmap b = decodeFile(f);
-		if (b != null)
-			return b;
-
-		switch (photoToLoad.imageType) {
-
-		case REMOTE:
-			try {
-				// from web
-				URL imageUrl = new URL(photoToLoad.url);
-
-				HttpURLConnection conn = (HttpURLConnection) imageUrl
-						.openConnection();
-				conn.setConnectTimeout(30000);
-				conn.setReadTimeout(30000);
-				conn.setInstanceFollowRedirects(true);
-
-				InputStream is = conn.getInputStream();
-				OutputStream os = new FileOutputStream(f);
-				StreamUtils.copyStream(is, os);
-				os.close();
-
-				Bitmap bitmap = decodeFile(f);
-				return bitmap;
-
-			} catch (Exception ex) {
-				// Log.e(TAG, ex.getMessage(), ex);
-				return null;
-			}
-
-			// LOCAL
-		default:
-			Drawable drawable = ImageUtils.createFromAsset(
-					photoToLoad.imageView.getContext(), photoToLoad.url);
-
-			if (mHQLocalBitmap) {
-				drawable = new BitmapDrawable(photoToLoad.imageView
-						.getContext().getResources(),
-						Bitmap.createScaledBitmap(
-								((BitmapDrawable) drawable).getBitmap(),
-								drawable.getIntrinsicWidth(),
-								drawable.getIntrinsicHeight(), true));
-
-				drawable.setFilterBitmap(true);
-				((BitmapDrawable) drawable).setAntiAlias(true);
-			}
-			return ((BitmapDrawable) drawable).getBitmap();
-
-		}
+		AssetManager assetManager = photoToLoad.imageView.getContext().getAssets();
+	    InputStream istr;
+	    try {
+	        istr = assetManager.open(photoToLoad.url);
+        	Options opts = new BitmapFactory.Options();
+        	if (photoToLoad.imageType == ImageType.SMALL) {
+        		opts.inSampleSize = 4;
+        	} else if (photoToLoad.imageType == ImageType.MEDIUM) {
+        		opts.inSampleSize = 2;
+        	} 
+        	opts.inDither = true;
+        	Bitmap bitmap = BitmapFactory.decodeStream(istr, new Rect(), opts);
+	        return bitmap;
+	        
+	    } catch (IOException e) {
+	    	Log.e(TAG, e.getMessage(), e);
+	        return null;
+	    }
 	}
-
-	// decodes image and scales it to reduce memory consumption
-	private Bitmap decodeFile(File f) {
+	/*
+	private Bitmap decodeStream(InputStream istr, int wantedWidth) {
 		try {
 			// decode image size
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+			BitmapFactory.decodeStream(istr, null, o);
 
 			// Find the correct scale value. It should be the power of 2.
-			final int REQUIRED_SIZE = 70;
 			int width_tmp = o.outWidth, height_tmp = o.outHeight;
 			int scale = 1;
 			while (true) {
-				if (width_tmp / 2 < REQUIRED_SIZE
-						|| height_tmp / 2 < REQUIRED_SIZE)
+				if (width_tmp / 2 < wantedWidth)
 					break;
 				width_tmp /= 2;
 				height_tmp /= 2;
@@ -199,19 +154,22 @@ public class ImageLoader {
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
+			o2.inDither = true;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 
 		} catch (FileNotFoundException e) {
 		}
 
 		return null;
-	}
+	}*/
 
 	// Task for the queue
 	private class PhotoToLoad {
 		public String url;
 		public ImageView imageView;
 		public ImageType imageType;
+		public int width;
+		public int height;
 		public int defaultDrawableResId = 0;
 		public ImageLoaderListener listener;
 
@@ -243,12 +201,12 @@ public class ImageLoader {
 			if (imageViewReused(photoToLoad))
 				return;
 
-			Bitmap bmp = getBitmap(photoToLoad);
-			mMemoryCache.put(photoToLoad.url, bmp);
+			Bitmap bitmap = getBitmap(photoToLoad);
+			mMemoryCache.put(photoToLoad.url, bitmap);
 			if (imageViewReused(photoToLoad))
 				return;
 
-			BitmapDisplayer bd = new BitmapDisplayer(bmp, photoToLoad);
+			BitmapDisplayer bd = new BitmapDisplayer(bitmap, photoToLoad);
 			Activity a = (Activity) photoToLoad.imageView.getContext();
 			a.runOnUiThread(bd);
 		}
@@ -274,11 +232,11 @@ public class ImageLoader {
 		public void run() {
 			if (imageViewReused(photoToLoad))
 				return;
-			if (bitmap != null)
+			if (bitmap != null) {
 				photoToLoad.imageView.setImageBitmap(bitmap);
-			else {
-				photoToLoad.imageView
-						.setImageResource((photoToLoad.defaultDrawableResId > 0) ? photoToLoad.defaultDrawableResId
+			} else {
+				photoToLoad.imageView.setImageResource(
+						(photoToLoad.defaultDrawableResId > 0) ? photoToLoad.defaultDrawableResId
 								: mDefaultDrawableId);
 			}
 
@@ -295,7 +253,6 @@ public class ImageLoader {
 
 	public void clearCache() {
 		mMemoryCache.clear();
-		mFileCache.clear();
 	}
 
 	/**
@@ -303,9 +260,6 @@ public class ImageLoader {
 	 * 
 	 */
 	public interface ImageLoaderListener {
-		public void onStartImageLoading(Bitmap bitmap, String url,
-				ImageView imageView, ImageType imageType);
-
 		public void onImageLoaded(Bitmap bitmap, String url,
 				ImageView imageView, ImageType imageType, boolean fromCache);
 	}

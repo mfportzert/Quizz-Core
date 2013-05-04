@@ -40,7 +40,6 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 
 		setContentView(R.layout.activity_quizz);
 		buildGameLayout(savedInstanceState);
-		Log.d("TEST", Locale.getDefault().getLanguage());
 	}
 
 	private void buildGameLayout(Bundle savedInstanceState) {

@@ -14,7 +14,7 @@ import android.content.Context;
 public class FileCache {
 
 	private File cacheDir;
-	private static final String CACHE_DIR_NAME = "Android/data/org.aurora.android";
+	private static final String CACHE_DIR_NAME = "Android/data/com.quiz.android";
 
 	public FileCache(Context context) {
 

@@ -76,7 +76,7 @@ public class QuizzActionBar extends RelativeLayout {
 					InputMethodManager imm = (InputMethodManager) ((Activity) getContext())
 							.getSystemService(Context.INPUT_METHOD_SERVICE);
 					if (imm.isAcceptingText()) {
-						  imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+						  imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 					}
 					((Activity) getContext()).onBackPressed();
 				}
