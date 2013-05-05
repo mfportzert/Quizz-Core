@@ -90,6 +90,7 @@ public enum QuizzDAO {
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_PARTIAL_RESPONSE + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_INDICATION + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_RESPONSE + ", "
+			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_COPYRIGHT + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LINK + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION
 		+ " FROM " + DbHelper.TABLE_SECTIONS
@@ -113,6 +114,7 @@ public enum QuizzDAO {
 		level.response = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_RESPONSE));
 		level.moreInfosLink = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_LINK));
 		level.status = cursor.getInt(cursor.getColumnIndex(_COLUMN_LEVEL_STATUS));
+		level.copyright = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_COPYRIGHT));
 		return level;
 	}
 
@@ -166,7 +168,7 @@ public enum QuizzDAO {
 		progressValues.put(DbHelper.COLUMN_STATUS, section.status);
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + section.ref + "\""
-				+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_SECTIONS;
+			+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + " = \"" + DbHelper.TABLE_SECTIONS + "\"";
 		
 		mDbHelper.getWritableUserdataDatabase().update(
 				DbHelper.TABLE_USERDATA, progressValues, 
@@ -179,9 +181,9 @@ public enum QuizzDAO {
 		cv.put(DbHelper.COLUMN_STATUS, level.status);
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + level.ref + "\""
-				+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + "=" + DbHelper.TABLE_LEVELS;
+				+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + "= \"" + DbHelper.TABLE_LEVELS + "\"";
 		
-		mDbHelper.getWritableDatabase().update(
+		mDbHelper.getWritableUserdataDatabase().update(
 				DbHelper.TABLE_USERDATA, cv, 
 				whereClause, null);
 	}

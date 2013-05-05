@@ -36,6 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_HINT = "hint";
 	public static final String COLUMN_HINT_TYPE = "hint_type";
 	public static final String COLUMN_RESPONSE = "response";
+	public static final String COLUMN_COPYRIGHT = "copyright";
 	public static final String COLUMN_PARTIAL_RESPONSE = "partial_response";
 	public static final String COLUMN_FK_SECTION = "fk_section_id";
 	public static final String COLUMN_FK_LEVEL = "fk_level_id";

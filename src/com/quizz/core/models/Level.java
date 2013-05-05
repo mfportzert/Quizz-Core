@@ -51,6 +51,8 @@ public class Level implements Parcelable {
 	@SerializedName("image")
 	public String imageName;
 
+	public String copyright;
+	
 	public int status = STATUS_LEVEL_UNCLEAR;
 	public int sectionId = 0;
 	public float rotation = 0;
@@ -70,6 +72,7 @@ public class Level implements Parcelable {
 		this.indication = parcel.readString();
 		this.moreInfosLink = parcel.readString();
 		this.imageName = parcel.readString();
+		this.copyright = parcel.readString();
 		this.status = parcel.readInt();
 		this.sectionId = parcel.readInt();
 		this.rotation = parcel.readFloat();
@@ -89,6 +92,7 @@ public class Level implements Parcelable {
 		dest.writeString(this.indication);
 		dest.writeString(this.moreInfosLink);
 		dest.writeString(this.imageName);
+		dest.writeString(this.copyright);
 		dest.writeInt(this.status);
 		dest.writeInt(this.sectionId);
 		dest.writeFloat(this.rotation);
