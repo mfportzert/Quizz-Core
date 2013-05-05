@@ -5,6 +5,7 @@ import java.util.List;
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
+import com.quizz.core.utils.PreferencesUtils;
 
 /**
  * @author M-F.P

@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -63,6 +62,8 @@ public class DbHelper extends SQLiteOpenHelper {
 	private boolean mUserdataDBExists;
 	private boolean mGamedataDBExists;
 	
+	private boolean mIsDbHelperInitDone = false;
+	
 	public DbHelper(Context ctx) {
 		super(ctx,
 				ctx.getPackageName().substring(
@@ -88,6 +89,8 @@ public class DbHelper extends SQLiteOpenHelper {
 		mUserdataDBFullPath = super.getReadableDatabase().getPath();
 		mGamedataDBFullPath = gamedataDirectoryPath + mGamedataDBName;
 		this.createGamedataDirOnSDCard(gamedataDirectoryPath);
+		
+		mIsDbHelperInitDone = true;
 	}
 	
 	private void createGamedataDirOnSDCard(String gamedataDirectoryPath)
@@ -124,7 +127,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public SQLiteDatabase getReadableDatabase() {
-		return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READONLY);
+		if (this.mIsDbHelperInitDone)
+			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READONLY);
+		return super.getReadableDatabase();
 	}
 	
 	public SQLiteDatabase getReadableUserdataDatabase() {
@@ -136,7 +141,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 	
 	public SQLiteDatabase getWritableDatabase() {
-		return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE);
+		if (this.mIsDbHelperInitDone)
+			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE);
+		return super.getWritableDatabase();
 	}  
 	
 	private void copyDatabase(String assetDBFilename, String dbFullPath) throws IOException {

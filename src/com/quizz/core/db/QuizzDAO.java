@@ -5,9 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
@@ -36,35 +34,47 @@ public enum QuizzDAO {
 		return mDbHelper;
 	}
 
+	private String getSectionStatusSubQuery()
+	{
+		return 
+		"SELECT " + DbHelper.COLUMN_STATUS
+		+ " FROM " + _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA
+		+ " WHERE "
+			+ DbHelper.TABLE_SECTIONS  + "." + DbHelper.COLUMN_REF
+		+ " = "
+			+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF
+		+ " AND "
+			+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF_FROM_TABLE
+		+ " = "
+			+ "\"" + DbHelper.TABLE_SECTIONS + "\""
+		+ " LIMIT 1";
+	}
+	
+	private String getLevelStatusSubQuery()
+	{
+		return
+		"SELECT " + DbHelper.COLUMN_STATUS
+		+ " FROM " + _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA
+		+ " WHERE "
+			+ DbHelper.TABLE_LEVELS  + "." + DbHelper.COLUMN_REF
+		+ " = "
+			+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF
+		+ " AND "
+			+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF_FROM_TABLE
+		+ " = "
+			+ "\"" + DbHelper.TABLE_LEVELS + "\""
+		+ " LIMIT 1";
+	}
+	
 	public List<Section> getSections() {
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		
 		String attachDBQuery = "ATTACH '" + mDbHelper.getUserdataDBFullPath()
-									+ "' AS "+ _ATTACH_USERDATA_DB +";";
-
-		String subQuerySectionStatus = 
-				"SELECT " + DbHelper.COLUMN_STATUS
-				+ " FROM " + _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA
-				+ " WHERE "
-					+ DbHelper.TABLE_SECTIONS  + "." + DbHelper.COLUMN_REF
-				+ " = "
-					+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF
-				+ " AND "
-					+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF_FROM_TABLE
-				+ " = "
-					+ "\"" + DbHelper.TABLE_SECTIONS + "\""
-				+ " LIMIT 1";
-
-		String subQueryLevelStatus = 
-				"SELECT " + DbHelper.COLUMN_STATUS
-				+ " FROM " + _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA
-				+ " WHERE "
-					+ DbHelper.TABLE_LEVELS  + "." + DbHelper.COLUMN_REF
-				+ " = "
-					+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF
-				+ " AND "
-					+ _ATTACH_USERDATA_DB + "." + DbHelper.TABLE_USERDATA + "." + DbHelper.COLUMN_REF_FROM_TABLE
-				+ " = "
-					+ "\"" + DbHelper.TABLE_LEVELS + "\""
-				+ " LIMIT 1";
+				+ "' AS "+ _ATTACH_USERDATA_DB +";";
+		db.execSQL(attachDBQuery);
+		
+		String subQuerySectionStatus = this.getSectionStatusSubQuery();
+		String subQueryLevelStatus = this.getLevelStatusSubQuery();
 		
 		String sqlQuery = 
 		" SELECT "
@@ -89,13 +99,8 @@ public enum QuizzDAO {
 			+ " = "
 				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;
 
-		Log.d("SQL QUERY : ", sqlQuery);
-		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-		db.execSQL(attachDBQuery);
 		Cursor cursor = db.rawQuery(sqlQuery, null);
-		Log.d("CURSOR DUMP", DatabaseUtils.dumpCursorToString(cursor));
-		Log.d("cursor", String.valueOf(cursor.getCount()));
-		return cursorToSections(cursor);
+        return cursorToSections(cursor);
 	}
 
 	private Level cursorToLevel(Cursor cursor) {
@@ -112,7 +117,7 @@ public enum QuizzDAO {
 	}
 
 	private Section cursorToSection(Cursor cursor) {
-		Section section = new Section();
+		Section section = new Section();		
 		section.id = cursor.getInt(cursor.getColumnIndex(_COLUMN_SECTION_ID));
 		section.ref = cursor.getString(cursor.getColumnIndex(_COLUMN_SECTION_REF));
 		section.number = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_NUMBER));
@@ -126,6 +131,9 @@ public enum QuizzDAO {
 		Section section = null;
 		List<Level> levels = new ArrayList<Level>();
 
+		if (cursor == null)
+			return sections;
+		
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			int column = cursor.getColumnIndex(_COLUMN_SECTION_ID);
