@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:widgets="http://schemas.android.com/apk/res/com.quizz.core.widgets"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:id="@+id/quizzLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -30,7 +30,8 @@
         android:id="@+id/fragmentsContainer"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_below="@+id/quizzTopActionBar" />
+	    android:layout_below="@+id/quizzTopActionBar"
+	    android:layout_above="@+id/adView" />
     
     <include
         android:id="@+id/ab_separator_shadow"
@@ -38,5 +39,14 @@
         android:layout_height="@dimen/ab_shadow_height"
         android:layout_below="@+id/quizzTopActionBar"
         layout="@layout/layout_shadow" />
+    
+    <com.google.ads.AdView
+       android:id="@+id/adView"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       ads:adSize="SMART_BANNER"
+       ads:adUnitId="a150d852e9f388f"
+       ads:loadAdOnCreate="true" />
     
 </RelativeLayout>
