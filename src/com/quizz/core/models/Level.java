@@ -1,7 +1,5 @@
 package com.quizz.core.models;
 
-import java.util.ArrayList;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,9 +14,6 @@ public class Level implements Parcelable {
 	public static String LEVEL_EASY = "easy";
 	public static String LEVEL_MEDIUM = "medium";
 	public static String LEVEL_HARD = "hard";
-
-	public static int HINT_USED = 1;
-	public static int HINT_UNUSED = 0;
 
 	public static final Parcelable.Creator<Level> CREATOR = new Parcelable.Creator<Level>() {
 

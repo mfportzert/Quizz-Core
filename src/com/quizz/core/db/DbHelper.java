@@ -129,7 +129,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	public SQLiteDatabase getReadableDatabase() {
 		if (this.mIsDbHelperInitDone)
-			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READONLY);
+			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		return super.getReadableDatabase();
 	}
 	
@@ -143,7 +143,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	
 	public SQLiteDatabase getWritableDatabase() {
 		if (this.mIsDbHelperInitDone)
-			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE);
+			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		return super.getWritableDatabase();
 	}  
 	
