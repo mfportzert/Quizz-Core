@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 import com.quizz.core.db.QuizzDAO;
@@ -21,7 +22,7 @@ public class Section implements Parcelable {
 	public static int SECTION_LOCKED = 0;
 
 	private static List<Integer> sectionsSteps = 
-			new ArrayList<Integer>(Arrays.asList(7, 16, 26, 36, 48, 60, 76, 96));
+			new ArrayList<Integer>(Arrays.asList(0, 7, 16, 26, 36, 48, 60, 76, 96));
 	
 	public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
 
@@ -93,14 +94,43 @@ public class Section implements Parcelable {
 		return true;
 	}
 	
+	/*
+	 * return number of cleared level left required to unlock the section
+	 * 
+	 * @return number of levels left to clear or null
+	 */
+	public int remainingClearedLevelCount() {
+		int remaining = this.requiredClearedLevelCount() - DataManager.getClearedLevelTotalCount();
+		if (remaining < 0)
+			remaining = -1;
+		return remaining;
+	}
+	
+	/*
+	 * return number of cleared level required to unlock the section
+	 * 
+	 * @return number of levels to clear or null
+	 */
+	public int requiredClearedLevelCount() {
+		if (this.number < sectionsSteps.size())
+			return sectionsSteps.get(this.number - 1);
+		return -1;
+	}
+	
 	public boolean isUnlockRequirementsReached() {
-		if (DataManager.getClearedLevelTotalCount() >= sectionsSteps.get(this.number - 1))
+		Log.d("NUMBER", "this.number : " + String.valueOf(this.number) + " < " + String.valueOf(sectionsSteps.size()));
+		if (this.number < sectionsSteps.size() &&
+				DataManager.getClearedLevelTotalCount() >= sectionsSteps.get(this.number - 1))
 			return true;
 		return false;
 	}
 	
 	public boolean isLast() {
 		return DataManager.isLastSection(this);
+	}
+	
+	public boolean isFirst() {
+		return DataManager.isFirstSection(this);
 	}
 	
 	public Section getNext() {

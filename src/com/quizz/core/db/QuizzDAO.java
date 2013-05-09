@@ -98,7 +98,8 @@ public enum QuizzDAO {
 			+ " ON "
 				+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID
 			+ " = "
-				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION;
+				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION
+		+ " ORDER BY " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", " + DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL;
 
 		Cursor cursor = db.rawQuery(sqlQuery, null);
         return cursorToSections(cursor);

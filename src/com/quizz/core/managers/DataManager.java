@@ -1,10 +1,7 @@
 package com.quizz.core.managers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import android.util.Log;
 
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.models.Level;
@@ -68,7 +65,7 @@ public class DataManager {
 		}
 		return levelClearedCount;
 	}
-		
+
 	public static Level getNextLevel(Level currentLevel) {
 		return getNextLevel(currentLevel, true);
 	}
@@ -196,6 +193,15 @@ public class DataManager {
 	 * @param currentSection
 	 * @return
 	 */
+	public static boolean isFirstSection(Section currentSection) {
+		List<Section> sections = getSections();
+		return (sections.indexOf(currentSection) == 0);
+	}
+	
+	/**
+	 * @param currentSection
+	 * @return
+	 */
 	public static boolean isLastSection(Section currentSection) {
 		List<Section> sections = getSections();
 		return (sections.indexOf(currentSection) == sections.size() - 1);
@@ -206,17 +212,28 @@ public class DataManager {
 	 * @return true if nextSection has been unlocked, false if 
 	 * 		   already unlocked or if currentSection is last
 	 */
-	public static int unlockNextSectionIfNecessary(int sectionId) {
-		Section currentSection = getSection(sectionId);
-		if (!currentSection.isLast() && 
-				currentSection.isUnlockRequirementsReached()) {
-			Section nextSection = currentSection.getNext();
-			if (nextSection.status == Section.SECTION_LOCKED) {
-				nextSection.status = Section.SECTION_UNLOCKED;
-				nextSection.update();
-				return nextSection.number;
+	public static int unlockNextSectionIfNecessary() {
+		List<Section> sections = getSections();
+
+		Collections.reverse(sections);
+		
+		for (Section section : sections) {
+
+			if (section.status == Section.SECTION_LOCKED
+					&& section.isUnlockRequirementsReached()) {
+			
+				int number = section.number;
+				
+				section.status = Section.SECTION_UNLOCKED;
+				section.update();
+
+				Collections.reverse(sections);
+				
+				return number;
 			}
 		}
+		
+		Collections.reverse(sections);
 		return -1;
 	}
 }

@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -116,12 +117,12 @@ public class DbHelper extends SQLiteOpenHelper {
 				this.copyDatabase(assetDBFilename, mUserdataDBFullPath);
 				mUserdataDBExists = true;
 			}
-			if (!mGamedataDBExists)
-			{
+//			if (!mGamedataDBExists)
+//			{
 				String assetDBFilename = mAppName + ((mDBLang == LANG_FR) ? "_fr" : "_en") + ".db";
 				this.copyDatabase(assetDBFilename, mGamedataDBFullPath);
 				mGamedataDBExists = true;
-			}
+//			}
 		} catch (IOException e) {
 			throw new Error("Error copying database");
 		}
@@ -134,18 +135,22 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 	
 	public SQLiteDatabase getReadableUserdataDatabase() {
+		if (this.mIsDbHelperInitDone)
+			return SQLiteDatabase.openDatabase(mUserdataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		return super.getReadableDatabase();
 	}
 	
 	public SQLiteDatabase getWritableUserdataDatabase() {
-		return super.getWritableDatabase();
+		if (this.mIsDbHelperInitDone)
+			return SQLiteDatabase.openDatabase(mUserdataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+		return super.getReadableDatabase();
 	}
-	
+
 	public SQLiteDatabase getWritableDatabase() {
 		if (this.mIsDbHelperInitDone)
 			return SQLiteDatabase.openDatabase(mGamedataDBFullPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		return super.getWritableDatabase();
-	}  
+	}
 	
 	private void copyDatabase(String assetDBFilename, String dbFullPath) throws IOException {
 
