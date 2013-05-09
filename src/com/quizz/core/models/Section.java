@@ -1,6 +1,8 @@
 package com.quizz.core.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,11 +15,14 @@ public class Section implements Parcelable {
 	/**
 	 * Required cleared percentage to unlock next section
 	 */
-	public static float SECTION_DEFAULT_UNLOCK_PERC = 0.5f;
+//	public static float SECTION_DEFAULT_UNLOCK_PERC = 0.5f;
 	
 	public static int SECTION_UNLOCKED = 1;
 	public static int SECTION_LOCKED = 0;
 
+	private static List<Integer> sectionsSteps = 
+			new ArrayList<Integer>(Arrays.asList(7, 16, 26, 36, 48, 60, 76, 96));
+	
 	public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
 
 		public Section createFromParcel(Parcel parcel) {
@@ -88,17 +93,10 @@ public class Section implements Parcelable {
 		return true;
 	}
 	
-	/**
-	 * @return 0.0f - 1.0f
-	 */
-	public float getClearedPerc() {
-		float clearedCount = 0;
-		for (Level level : levels) {
-			if (level.status == Level.STATUS_LEVEL_CLEAR) {
-				clearedCount++;
-			}
-		}
-		return clearedCount / (float) levels.size();
+	public boolean isUnlockRequirementsReached() {
+		if (DataManager.getClearedLevelTotalCount() >= sectionsSteps.get(this.number - 1))
+			return true;
+		return false;
 	}
 	
 	public boolean isLast() {

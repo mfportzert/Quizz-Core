@@ -1,11 +1,14 @@
 package com.quizz.core.managers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import android.util.Log;
 
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
-import com.quizz.core.utils.PreferencesUtils;
 
 /**
  * @author M-F.P
@@ -17,7 +20,7 @@ public class DataManager {
 
 	private static List<Section> mCacheSections = null;
 	public static boolean dataLoaded = false;
-
+	
 	public static synchronized void setSections(List<Section> sections) {
 		mCacheSections = sections;
 	}
@@ -54,6 +57,18 @@ public class DataManager {
 		return null;
 	}
 	
+	public static int getClearedLevelTotalCount() {
+		int levelClearedCount = 0;
+		List<Section> sections = getSections();
+		for (Section section : sections) {
+			for (Level level : section.levels) {
+				if (level.status == Level.STATUS_LEVEL_CLEAR)
+					levelClearedCount++;
+			}
+		}
+		return levelClearedCount;
+	}
+		
 	public static Level getNextLevel(Level currentLevel) {
 		return getNextLevel(currentLevel, true);
 	}
@@ -194,7 +209,7 @@ public class DataManager {
 	public static boolean unlockNextSectionIfNecessary(int sectionId) {
 		Section currentSection = getSection(sectionId);
 		if (!currentSection.isLast() && 
-				currentSection.getClearedPerc() >= Section.SECTION_DEFAULT_UNLOCK_PERC) {
+				currentSection.isUnlockRequirementsReached()) {
 			Section nextSection = currentSection.getNext();
 			if (nextSection.status == Section.SECTION_LOCKED) {
 				nextSection.status = Section.SECTION_UNLOCKED;
