@@ -206,7 +206,7 @@ public class DataManager {
 	 * @return true if nextSection has been unlocked, false if 
 	 * 		   already unlocked or if currentSection is last
 	 */
-	public static boolean unlockNextSectionIfNecessary(int sectionId) {
+	public static int unlockNextSectionIfNecessary(int sectionId) {
 		Section currentSection = getSection(sectionId);
 		if (!currentSection.isLast() && 
 				currentSection.isUnlockRequirementsReached()) {
@@ -214,9 +214,9 @@ public class DataManager {
 			if (nextSection.status == Section.SECTION_LOCKED) {
 				nextSection.status = Section.SECTION_UNLOCKED;
 				nextSection.update();
-				return true;
+				return nextSection.number;
 			}
 		}
-		return false;
+		return -1;
 	}
 }
