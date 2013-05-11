@@ -1,7 +1,8 @@
 package com.quizz.core.managers;
 
-import java.util.Collections;
 import java.util.List;
+
+import android.util.Log;
 
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.models.Level;
@@ -128,7 +129,7 @@ public class DataManager {
 	
 	/**
 	 * @param currentLevel
-	 * @return
+	 * @return next opened level or null if not found
 	 */
 	public static Level getNextOpenedLevelInSection(Level currentLevel) {
 		if (currentLevel != null) {
@@ -139,7 +140,12 @@ public class DataManager {
 				// If index was found and is < section's levels size
 				if (levelIndex > -1) {
 					int savedIndex = levelIndex;
-					levelIndex++;
+					if (levelIndex == (section.levels.size() - 1)) {
+						levelIndex = 0;
+					} else {
+						levelIndex++;
+					}
+					
 					// we'll make a loop and search for the first open level until we
 					// get back to the currentLevel
 					while (levelIndex != savedIndex) {
@@ -147,9 +153,10 @@ public class DataManager {
 						if (tmpLevel.status == Level.STATUS_LEVEL_UNCLEAR) {
 							return tmpLevel;
 						}
-						levelIndex++;
-						if (levelIndex == section.levels.size()) {
+						if (levelIndex == (section.levels.size() - 1)) {
 							levelIndex = 0;
+						} else {
+							levelIndex++;
 						}
 					}
 				}
@@ -209,31 +216,18 @@ public class DataManager {
 	
 	/**
 	 * @param sectionId
-	 * @return true if nextSection has been unlocked, false if 
-	 * 		   already unlocked or if currentSection is last
+	 * @return id of section if one was unlocked or -1 otherwise
 	 */
 	public static int unlockNextSectionIfNecessary() {
-		List<Section> sections = getSections();
-
-		Collections.reverse(sections);
-		
-		for (Section section : sections) {
-
+		for (Section section : getSections()) {
 			if (section.status == Section.SECTION_LOCKED
-					&& section.isUnlockRequirementsReached()) {
-			
-				int number = section.number;
-				
+					&& section.isUnlockRequirementsReached()) {			
 				section.status = Section.SECTION_UNLOCKED;
 				section.update();
-
-				Collections.reverse(sections);
-				
-				return number;
+				return section.number;
 			}
 		}
 		
-		Collections.reverse(sections);
 		return -1;
 	}
 }

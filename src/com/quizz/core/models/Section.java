@@ -21,6 +21,7 @@ public class Section implements Parcelable {
 	public static int SECTION_UNLOCKED = 1;
 	public static int SECTION_LOCKED = 0;
 
+	// TODO: Mettre les valeurs dans arrays.xml
 	private static List<Integer> sectionsSteps = 
 			new ArrayList<Integer>(Arrays.asList(0, 7, 16, 26, 36, 48, 60, 76, 96));
 	
