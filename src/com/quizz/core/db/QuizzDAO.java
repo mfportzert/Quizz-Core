@@ -5,7 +5,9 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
@@ -78,8 +80,6 @@ public enum QuizzDAO {
 		
 		String sqlQuery = 
 		" SELECT "
-			+ "IFNULL((" + subQuerySectionStatus + "), " + Section.SECTION_LOCKED + ") AS " + _COLUMN_SECTION_STATUS + ", "
-			+ "IFNULL((" + subQueryLevelStatus + "), " + Level.STATUS_LEVEL_UNCLEAR + ") AS " + _COLUMN_LEVEL_STATUS + ", "
 			+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_ID + " AS " + _COLUMN_SECTION_ID + ", "
 			+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_REF + " AS " + _COLUMN_SECTION_REF + ", "
 			+ DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", "
@@ -92,7 +92,9 @@ public enum QuizzDAO {
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_RESPONSE + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_COPYRIGHT + ", "
 			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LINK + ", "
-			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION
+			+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION + ", "
+			+ "IFNULL((" + subQuerySectionStatus + "), " + Section.SECTION_LOCKED + ") AS " + _COLUMN_SECTION_STATUS + ", "
+			+ "IFNULL((" + subQueryLevelStatus + "), " + Level.STATUS_LEVEL_UNCLEAR + ") AS " + _COLUMN_LEVEL_STATUS
 		+ " FROM " + DbHelper.TABLE_SECTIONS
 		+ " LEFT JOIN " + DbHelper.TABLE_LEVELS
 			+ " ON "
@@ -102,6 +104,7 @@ public enum QuizzDAO {
 		+ " ORDER BY " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", " + DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL;
 
 		Cursor cursor = db.rawQuery(sqlQuery, null);
+		
         return cursorToSections(cursor);
 	}
 
@@ -170,6 +173,8 @@ public enum QuizzDAO {
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + section.ref + "\""
 			+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + " = \"" + DbHelper.TABLE_SECTIONS + "\"";
+		
+		Log.d("updateSection()", "updateSection() : " + whereClause);
 		
 		mDbHelper.getWritableUserdataDatabase().update(
 				DbHelper.TABLE_USERDATA, progressValues, 
