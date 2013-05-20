@@ -19,7 +19,8 @@ public class PreferencesUtils {
 	public static final String PREF_EXIT_POPUP_KEY = "PreferencesUtils.EXIT_POPUP";
 	public static final String PREF_LAST_PLAYED_LEVEL_KEY = "PreferencesUtils.PREF_LAST_LEVEL_PLAYED_KEY";
 	public static final String PREF_UNLOCKED_LETTERS_KEY = "PreferencesUtils.PREF_UNLOCKED_LETTERS_KEY";
-	
+	public static final String PREF_USED_HINTS_COUNT_KEY = "PreferencesUtils.PREF_USED_HINTS_COUNT_KEY";
+
 	public static final int PREF_VERSION_VALUE = 1;
 	public static final int PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE = 3;
 	public static final int PREF_DEFAULT_NB_HINTS_ONSUCCESS_VALUE = 2;
@@ -153,4 +154,19 @@ public class PreferencesUtils {
 		editor.putInt(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId, levelId);
 		editor.commit();
 	}
+	
+	public static void setUsedHintsCount(Activity activity, int usedHintCount) {
+		Editor editor = getSharedPreferences(activity).edit();
+		editor.putInt(PREF_USED_HINTS_COUNT_KEY, usedHintCount);
+		editor.commit();
+	}
+
+	public static void incrementUsedHintsCount(Activity activity) {
+		setUsedHintsCount(activity, getUsedHintsCount(activity) + 1);
+	}
+	
+	public static int getUsedHintsCount(Activity activity) {
+		return getSharedPreferences(activity).getInt(PREF_USED_HINTS_COUNT_KEY, 0);
+	}
+	
 }

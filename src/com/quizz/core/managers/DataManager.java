@@ -45,6 +45,15 @@ public class DataManager {
 		}
 	}
 
+	public static int getLevelTotalCount() {
+		int levelCount = 0;
+		List<Section> sections = getSections();
+		for (Section section : sections) {
+			levelCount += section.levels.size();
+		}
+		return levelCount;
+	}
+	
 	public static Section getSection(int id) {
 		List<Section> sections = getSections();
 		for (Section section : sections) {
@@ -229,5 +238,28 @@ public class DataManager {
 		}
 		
 		return -1;
+	}
+	
+	public static int getCompletedSectionsCount() {
+		short completedSections = 0;
+		for (Section section : getSections()) {
+			short clearedLevels = 0;
+			for (Level level : section.levels) {
+				if (level.status == Level.STATUS_LEVEL_CLEAR)
+					clearedLevels += 1;
+			}
+			if (section.levels.size() == clearedLevels)
+				completedSections += 1; 
+		}
+		return completedSections;
+	}
+	
+	public static int getUnlockedSectionsCount() {
+		short unlockedSection = 1;
+		for (Section section : getSections()) {
+			if (section.status == Section.SECTION_UNLOCKED)
+				unlockedSection += 1;
+		}
+		return unlockedSection;
 	}
 }
