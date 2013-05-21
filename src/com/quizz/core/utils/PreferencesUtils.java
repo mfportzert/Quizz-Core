@@ -20,6 +20,7 @@ public class PreferencesUtils {
 	public static final String PREF_LAST_PLAYED_LEVEL_KEY = "PreferencesUtils.PREF_LAST_LEVEL_PLAYED_KEY";
 	public static final String PREF_UNLOCKED_LETTERS_KEY = "PreferencesUtils.PREF_UNLOCKED_LETTERS_KEY";
 	public static final String PREF_USED_HINTS_COUNT_KEY = "PreferencesUtils.PREF_USED_HINTS_COUNT_KEY";
+	public static final String PREF_INFORMATION_UNLOCKED_KEY = "PreferencesUtils.PREF_INFORMATION_UNLOCKED_KEY";
 
 	public static final int PREF_VERSION_VALUE = 1;
 	public static final int PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE = 3;
@@ -63,6 +64,13 @@ public class PreferencesUtils {
 		return getSharedPreferences(activity).getInt(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId, -1);
 	}
 
+	public static Boolean isInformationUnlocked(Activity activity, Level level) {
+		String sectionId = "_s"+level.sectionId;
+		String levelId = "_l"+level.id;
+		return getSharedPreferences(activity).getBoolean(
+				PREF_INFORMATION_UNLOCKED_KEY+sectionId+levelId, false);
+	}
+	
 	public static String getUnlockedLetters(Activity activity, Level level) {
 		String lang = Locale.getDefault().getLanguage();
 		String sectionId = "_s"+level.sectionId;
@@ -140,6 +148,15 @@ public class PreferencesUtils {
 		
 		Editor editor = getSharedPreferences(activity).edit();
 		editor.putString(PREF_UNLOCKED_LETTERS_KEY+sectionId+levelId+lang, letters);
+		editor.commit();
+	}
+	
+	public static void setInformationUnlocked(Activity activity, Level level, boolean unlocked) {
+		String sectionId = "_s"+level.sectionId;
+		String levelId = "_l"+level.id;
+		
+		Editor editor = getSharedPreferences(activity).edit();
+		editor.putBoolean(PREF_INFORMATION_UNLOCKED_KEY+sectionId+levelId, unlocked);
 		editor.commit();
 	}
 	
