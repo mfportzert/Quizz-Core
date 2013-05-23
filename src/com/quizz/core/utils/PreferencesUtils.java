@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
@@ -24,91 +25,91 @@ public class PreferencesUtils {
 
 	public static final int PREF_VERSION_VALUE = 1;
 	public static final int PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE = 3;
-	public static final int PREF_DEFAULT_NB_HINTS_ONSUCCESS_VALUE = 2;
+	public static final int PREF_DEFAULT_NB_HINTS_ONSUCCESS_VALUE = 1;
 	
 
-	public static SharedPreferences getSharedPreferences(Activity activity) {
-		String getSharedPreferencesKey = activity.getApplication().getPackageName();
-		return ((Activity) activity).getSharedPreferences(getSharedPreferencesKey, Activity.MODE_PRIVATE);
+	public static SharedPreferences getSharedPreferences(Context context) {
+		String getSharedPreferencesKey = context.getPackageName();
+		return context.getSharedPreferences(getSharedPreferencesKey, Activity.MODE_PRIVATE);
 	}
 	
-	public static boolean containsVibrationPreference(Activity activity) {
-		return getSharedPreferences(activity).contains(PREF_VIBRATION_KEY);		
+	public static boolean containsVibrationPreference(Context context) {
+		return getSharedPreferences(context).contains(PREF_VIBRATION_KEY);		
 	}
 	
-	public static boolean containsAudioPreference(Activity activity) {
-		return getSharedPreferences(activity).contains(PREF_AUDIO_KEY);
+	public static boolean containsAudioPreference(Context context) {
+		return getSharedPreferences(context).contains(PREF_AUDIO_KEY);
 	}
 	
-	public static boolean containsExitPopupPreference(Activity activity) {
-		return getSharedPreferences(activity).contains(PREF_EXIT_POPUP_KEY);
+	public static boolean containsExitPopupPreference(Context context) {
+		return getSharedPreferences(context).contains(PREF_EXIT_POPUP_KEY);
 	}
 
-	public static int getHintsAvailable(Activity activity) {
-		return getSharedPreferences(activity).getInt(PREF_UNLOCKED_HINTS_COUNT_KEY, 0);
+	public static int getHintsAvailable(Context context) {
+		return getSharedPreferences(context).getInt(PREF_UNLOCKED_HINTS_COUNT_KEY, 0);
 	}
 
-	public static boolean isVibrationEnabled(Activity activity) {
-		return getSharedPreferences(activity).getBoolean(PREF_VIBRATION_KEY, false);		
+	public static boolean isVibrationEnabled(Context context) {
+		return getSharedPreferences(context).getBoolean(PREF_VIBRATION_KEY, false);		
 	}
 	
-	public static boolean isAudioEnabled(Activity activity) {
-		return getSharedPreferences(activity).getBoolean(PREF_AUDIO_KEY, false);
+	public static boolean isAudioEnabled(Context context) {
+		return getSharedPreferences(context).getBoolean(PREF_AUDIO_KEY, false);
 	}
 	
-	public static boolean isExitPopupEnabled(Activity activity) {
-		return getSharedPreferences(activity).getBoolean(PREF_EXIT_POPUP_KEY, true);
+	public static boolean isExitPopupEnabled(Context context) {
+		return getSharedPreferences(context).getBoolean(PREF_EXIT_POPUP_KEY, true);
 	}
 
-	public static int getLastPlayedLevel(Activity activity, int sectionId) {
-		return getSharedPreferences(activity).getInt(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId, -1);
+	public static int getLastPlayedLevel(Context context, int sectionId) {
+		return getSharedPreferences(context).getInt(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId, -1);
 	}
 
-	public static Boolean isInformationUnlocked(Activity activity, Level level) {
+	public static Boolean isInformationUnlocked(Context context, Level level) {
 		String sectionId = "_s"+level.sectionId;
 		String levelId = "_l"+level.id;
-		return getSharedPreferences(activity).getBoolean(
+		return getSharedPreferences(context).getBoolean(
 				PREF_INFORMATION_UNLOCKED_KEY+sectionId+levelId, false);
 	}
 	
-	public static String getUnlockedLetters(Activity activity, Level level) {
+	public static String getUnlockedLetters(Context context, Level level) {
 		String lang = Locale.getDefault().getLanguage();
 		String sectionId = "_s"+level.sectionId;
 		String levelId = "_l"+level.id;
-		return getSharedPreferences(activity).getString(
+		return getSharedPreferences(context).getString(
 				PREF_UNLOCKED_LETTERS_KEY+sectionId+levelId+lang, "");
 	}
 
-	public static void setVibrationEnabled(Activity activity, boolean status) {		
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setVibrationEnabled(Context context, boolean status) {		
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putBoolean(PREF_VIBRATION_KEY, status);		
 		editor.commit();
 	}
 	
-	public static void setAudioEnabled(Activity activity, boolean status) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setAudioEnabled(Context context, boolean status) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putBoolean(PREF_AUDIO_KEY, status);
 		editor.commit();
 	}
 	
-	public static void setExitPopupEnabled(Activity activity, boolean status) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setExitPopupEnabled(Context context, boolean status) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putBoolean(PREF_EXIT_POPUP_KEY, status);
 		editor.commit();
 	}
 	
-	public static void setHintsAvailable(Activity activity, int hintsNumber) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setHintsAvailable(Context context, int hintsNumber) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putInt(PREF_UNLOCKED_HINTS_COUNT_KEY, hintsNumber);
 		editor.commit();
 	}
 	
-	public static void removeUnlockedLetters(Activity activity, Level level) {
-		removeUnlockedLetters(activity, level, true);
+	public static void removeUnlockedLetters(Context context, Level level) {
+		removeUnlockedLetters(context, level, true);
 	}
 
-	public static void resetGame(Activity activity) {
-		SharedPreferences sharedPrefs = getSharedPreferences(activity);
+	public static void resetGame(Context context) {
+		SharedPreferences sharedPrefs = getSharedPreferences(context);
 		Map<String, ?> allPrefs = sharedPrefs.getAll();
 
 		Editor editor = sharedPrefs.edit();
@@ -122,12 +123,12 @@ public class PreferencesUtils {
 		editor.commit();
 	}
 
-	public static void removeUnlockedLetters(Activity activity, Level level, boolean allLangs) {
+	public static void removeUnlockedLetters(Context context, Level level, boolean allLangs) {
 		String lang = Locale.getDefault().getLanguage();
 		String sectionId = "_s"+level.sectionId;
 		String levelId = "_l"+level.id;
 		
-		SharedPreferences sharedPrefs = getSharedPreferences(activity);
+		SharedPreferences sharedPrefs = getSharedPreferences(context);
 		Map<String, ?> allPrefs = sharedPrefs.getAll();
 		
 		Editor editor = sharedPrefs.edit();
@@ -141,49 +142,49 @@ public class PreferencesUtils {
 		editor.commit();
 	}
 	
-	public static void setUnlockedLetters(Activity activity, Level level, String letters) {
+	public static void setUnlockedLetters(Context context, Level level, String letters) {
 		String lang = Locale.getDefault().getLanguage();
 		String sectionId = "_s"+level.sectionId;
 		String levelId = "_l"+level.id;
 		
-		Editor editor = getSharedPreferences(activity).edit();
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putString(PREF_UNLOCKED_LETTERS_KEY+sectionId+levelId+lang, letters);
 		editor.commit();
 	}
 	
-	public static void setInformationUnlocked(Activity activity, Level level, boolean unlocked) {
+	public static void setInformationUnlocked(Context context, Level level, boolean unlocked) {
 		String sectionId = "_s"+level.sectionId;
 		String levelId = "_l"+level.id;
 		
-		Editor editor = getSharedPreferences(activity).edit();
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putBoolean(PREF_INFORMATION_UNLOCKED_KEY+sectionId+levelId, unlocked);
 		editor.commit();
 	}
 	
-	public static void removeLastPlayedLevel(Activity activity, int sectionId) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void removeLastPlayedLevel(Context context, int sectionId) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.remove(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId);
 		editor.commit();
 	}
 	
-	public static void setLastPlayedLevel(Activity activity, int sectionId, int levelId) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setLastPlayedLevel(Context context, int sectionId, int levelId) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putInt(PREF_LAST_PLAYED_LEVEL_KEY+"_s"+sectionId, levelId);
 		editor.commit();
 	}
 	
-	public static void setUsedHintsCount(Activity activity, int usedHintCount) {
-		Editor editor = getSharedPreferences(activity).edit();
+	public static void setUsedHintsCount(Context context, int usedHintCount) {
+		Editor editor = getSharedPreferences(context).edit();
 		editor.putInt(PREF_USED_HINTS_COUNT_KEY, usedHintCount);
 		editor.commit();
 	}
 
-	public static void incrementUsedHintsCount(Activity activity) {
-		setUsedHintsCount(activity, getUsedHintsCount(activity) + 1);
+	public static void incrementUsedHintsCount(Context context) {
+		setUsedHintsCount(context, getUsedHintsCount(context) + 1);
 	}
 	
-	public static int getUsedHintsCount(Activity activity) {
-		return getSharedPreferences(activity).getInt(PREF_USED_HINTS_COUNT_KEY, 0);
+	public static int getUsedHintsCount(Context context) {
+		return getSharedPreferences(context).getInt(PREF_USED_HINTS_COUNT_KEY, 0);
 	}
 	
 }

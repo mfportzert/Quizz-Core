@@ -255,7 +255,7 @@ public class DataManager {
 	}
 	
 	public static int getUnlockedSectionsCount() {
-		short unlockedSection = 1;
+		short unlockedSection = 0;
 		for (Section section : getSections()) {
 			if (section.status == Section.SECTION_UNLOCKED)
 				unlockedSection += 1;
