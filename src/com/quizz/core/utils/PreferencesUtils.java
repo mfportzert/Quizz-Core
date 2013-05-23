@@ -114,9 +114,11 @@ public class PreferencesUtils {
 
 		Editor editor = sharedPrefs.edit();
 		editor.putInt(PREF_UNLOCKED_HINTS_COUNT_KEY, PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE);
+		editor.putInt(PREF_USED_HINTS_COUNT_KEY, 0);
 		for (String pref : allPrefs.keySet()) {
 			if (pref.startsWith(PREF_UNLOCKED_LETTERS_KEY) 
-					|| pref.startsWith(PREF_LAST_PLAYED_LEVEL_KEY)) {
+					|| pref.startsWith(PREF_LAST_PLAYED_LEVEL_KEY)
+					|| pref.startsWith(PREF_INFORMATION_UNLOCKED_KEY)) {
 				editor.remove(pref);
 			}
 		}
@@ -179,8 +181,8 @@ public class PreferencesUtils {
 		editor.commit();
 	}
 
-	public static void incrementUsedHintsCount(Context context) {
-		setUsedHintsCount(context, getUsedHintsCount(context) + 1);
+	public static void incrementUsedHintsCount(Context context, int usedHintCount) {
+		setUsedHintsCount(context, getUsedHintsCount(context) + usedHintCount);
 	}
 	
 	public static int getUsedHintsCount(Context context) {
