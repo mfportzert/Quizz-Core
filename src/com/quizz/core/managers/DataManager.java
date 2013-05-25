@@ -262,4 +262,17 @@ public class DataManager {
 		}
 		return unlockedSection;
 	}
+	
+	public static int getLevelNumber(Level level) {
+		int levelNumber = 1;
+		for (Section section : getSections()) {
+			for (Level tmpLevel : section.levels) {
+				if (level == tmpLevel) {
+					return levelNumber;
+				}
+				levelNumber++;
+			}
+		}
+		return -1;
+	}
 }
