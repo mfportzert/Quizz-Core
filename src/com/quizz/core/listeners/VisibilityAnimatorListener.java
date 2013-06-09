@@ -2,8 +2,9 @@ package com.quizz.core.listeners;
 
 import android.view.View;
 
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+
 
 public class VisibilityAnimatorListener implements AnimatorListener {
 

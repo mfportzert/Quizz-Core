@@ -22,9 +22,7 @@ public class PreferencesUtils {
 	public static final String PREF_UNLOCKED_LETTERS_KEY = "PreferencesUtils.PREF_UNLOCKED_LETTERS_KEY";
 	public static final String PREF_USED_HINTS_COUNT_KEY = "PreferencesUtils.PREF_USED_HINTS_COUNT_KEY";
 	public static final String PREF_INFORMATION_UNLOCKED_KEY = "PreferencesUtils.PREF_INFORMATION_UNLOCKED_KEY";
-	
-	public static final String PREF_TUTORIAL_CURRENT_STEP_KEY = "PreferencesUtils.PREF_TUTORIAL_CURRENT_STEP_KEY";
-	public static final String PREF_TUTORIAL_TOTAL_STEP_KEY = "PreferencesUtils.PREF_TUTORIAL_TOTAL_STEP_KEY";
+	public static final String PREF_IS_TUTORIAL_DISPLAYED_KEY = "PreferencesUtils.PREF_IS_TUTORIAL_DISPLAYED_KEY";
 
 	public static final int PREF_VERSION_VALUE = 1;
 	public static final int PREF_DEFAULT_UNLOCKED_HINTS_COUNT_VALUE = 3;
@@ -192,11 +190,13 @@ public class PreferencesUtils {
 		return getSharedPreferences(context).getInt(PREF_USED_HINTS_COUNT_KEY, 0);
 	}
 	
-	public static int getTutorialCurrentStep(Context context) {
-		return getSharedPreferences(context).getInt(PREF_TUTORIAL_CURRENT_STEP_KEY, 0);
+	public static boolean isTutorialDone(Context context) {
+		return getSharedPreferences(context).getBoolean(PREF_IS_TUTORIAL_DISPLAYED_KEY, false);
 	}
 
-	public static int getTutorialTotalStep(Context context) {
-		return getSharedPreferences(context).getInt(PREF_TUTORIAL_TOTAL_STEP_KEY, 0);
+	public static void setTutorialDone(Context context) {
+		Editor editor = getSharedPreferences(context).edit();
+		editor.putBoolean(PREF_IS_TUTORIAL_DISPLAYED_KEY, true);
+		editor.commit();
 	}
 }

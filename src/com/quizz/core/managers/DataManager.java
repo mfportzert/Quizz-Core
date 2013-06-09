@@ -2,8 +2,6 @@ package com.quizz.core.managers;
 
 import java.util.List;
 
-import android.util.Log;
-
 import com.quizz.core.db.QuizzDAO;
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;

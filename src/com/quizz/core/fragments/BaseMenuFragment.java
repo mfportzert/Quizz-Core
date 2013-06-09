@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.AnimatorSet;
 import com.quizz.core.activities.BaseQuizzActivity;
 import com.quizz.core.interfaces.FragmentContainer;
 import com.quizz.core.utils.NavigationUtils;

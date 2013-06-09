@@ -37,6 +37,10 @@ public abstract class BaseQuizzActivity extends SherlockFragmentActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+	
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().hide();
+		}
 
 		setContentView(R.layout.activity_quizz);
 		buildGameLayout(savedInstanceState);

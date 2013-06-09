@@ -47,6 +47,7 @@
        android:layout_alignParentBottom="true"
        ads:adSize="SMART_BANNER"
        ads:adUnitId="a150d852e9f388f"
-       ads:loadAdOnCreate="true" />
+       ads:loadAdOnCreate="true"
+       android:visibility="gone" />
     
 </RelativeLayout>

@@ -3,15 +3,8 @@
  */
 package com.quizz.core.imageloader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -27,8 +20,6 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.Rect;
 import android.util.Log;
 import android.widget.ImageView;
-
-import com.quizz.core.utils.StreamUtils;
 
 /**
  * @author M-F.P
