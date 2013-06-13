@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 import com.quizz.core.db.QuizzDAO;
@@ -119,7 +118,6 @@ public class Section implements Parcelable {
 	}
 	
 	public boolean isUnlockRequirementsReached() {
-		Log.d("NUMBER", "this.number : " + String.valueOf(this.number) + " < " + String.valueOf(sectionsSteps.size()));
 		if (this.number < sectionsSteps.size() &&
 				DataManager.getClearedLevelTotalCount() >= sectionsSteps.get(this.number - 1))
 			return true;

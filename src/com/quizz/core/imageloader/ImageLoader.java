@@ -18,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Rect;
-import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -119,7 +118,7 @@ public class ImageLoader {
 	        return bitmap;
 	        
 	    } catch (IOException e) {
-	    	Log.e(TAG, e.getMessage(), e);
+	    	e.printStackTrace();
 	        return null;
 	    }
 	}

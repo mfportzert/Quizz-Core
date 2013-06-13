@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -89,9 +88,9 @@ public class NavigationUtils {
 			transaction.commit();
 			
 		} catch (InstantiationException e) {
-			Log.e(TAG, e.getMessage(), e);
+			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			Log.e(TAG, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 }

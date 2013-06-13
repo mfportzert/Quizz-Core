@@ -5,9 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.quizz.core.models.Level;
 import com.quizz.core.models.Section;
@@ -69,10 +67,8 @@ public enum QuizzDAO {
 	}
 	
 	public List<Section> getSections() {
-		Log.e("ASYNC", "[getSections] get db: "+System.currentTimeMillis());
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 		
-		Log.e("ASYNC", "[getSections] attach db: "+System.currentTimeMillis());
 		String attachDBQuery = "ATTACH '" + mDbHelper.getUserdataDBFullPath()
 				+ "' AS "+ _ATTACH_USERDATA_DB +";";
 		db.execSQL(attachDBQuery);
@@ -105,13 +101,8 @@ public enum QuizzDAO {
 				+ DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_FK_SECTION
 		+ " ORDER BY " + DbHelper.TABLE_SECTIONS + "." + DbHelper.COLUMN_NUMBER + ", " + DbHelper.TABLE_LEVELS + "." + DbHelper.COLUMN_LEVEL;
 
-		Log.e("ASYNC", "[getSections] get cursor: "+System.currentTimeMillis());
-
 		Cursor cursor = db.rawQuery(sqlQuery, null);
-		Log.e("ASYNC", "[getSections] transform cursor: "+System.currentTimeMillis());
-
 		List<Section> sections = cursorToSections(cursor);
-		Log.e("ASYNC", "[getSections] close db: "+System.currentTimeMillis());
 
 		db.close();
         return sections;
@@ -182,8 +173,6 @@ public enum QuizzDAO {
 		
 		String whereClause = DbHelper.COLUMN_REF + " = \"" + section.ref + "\""
 			+ " AND " + DbHelper.COLUMN_REF_FROM_TABLE + " = \"" + DbHelper.TABLE_SECTIONS + "\"";
-		
-		Log.d("updateSection()", "updateSection() : " + whereClause);
 		
 		SQLiteDatabase db = mDbHelper.getWritableUserdataDatabase();
 		db.update(DbHelper.TABLE_USERDATA, progressValues, whereClause,	null);

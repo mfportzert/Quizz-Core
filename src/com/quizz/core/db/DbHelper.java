@@ -10,9 +10,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -167,7 +165,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			output.close();
 			input.close();
 		} catch (FileNotFoundException e) {
-			Log.d("ERROR COPYING DB", "FILE NOT FOUND EXCEPTION : " + outputFilename);
+			e.printStackTrace();
 		}
 	}
 
